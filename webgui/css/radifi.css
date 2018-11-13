@@ -1,0 +1,241 @@
+.Wt-popup{
+  background-color: #A2A0A0E6;
+  border: solid 1px #828181;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+}
+
+.Wt-popup .titlebar{
+  font-size: 25px;
+}
+
+.Wt-spinbox{
+  height: 40px;
+}
+
+.groupBox-custom{
+  width: 50%;
+}
+
+.button_width{
+  width: 40%;
+}
+
+/*
+ * WSlider
+ */
+
+.Wt-slider-h .Wt-slider-bg {
+  margin: 0 5px;
+}
+
+.Wt-slider-h .Wt-w {
+  position: absolute;
+  top: 50%;
+  left: -1px;
+  width: 100%;
+  height: 8px;
+  margin-top: -5px;
+  background: #eeeeee;
+  border: 1px solid #dddddd;
+  border-radius: 4px;
+}
+
+.Wt-slider-h .fill {
+  top: 50%;
+  height: 8px;
+  margin-top: -5px;
+  background: #428bca;
+  border: 1px solid #428bca;
+  border-radius: 4px;
+}
+
+.Wt-slider-h .handle {
+  top: 50% !important;
+  height: 18px !important;
+  margin-top: -10px;
+  color: #333333;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-color: #cccccc;
+  border-radius: 4px;
+}
+
+.Wt-slider-h .handle:hover,
+.Wt-slider-h .handle:focus,
+.Wt-slider-h .handle:active,
+.Wt-slider-h .handle.active,
+.open .dropdown-toggle.Wt-slider-h .handle {
+  color: #333333;
+  background-color: #ebebeb;
+  border-color: #adadad;
+}
+
+.Wt-slider-h .handle:active,
+.Wt-slider-h .handle.active,
+.open .dropdown-toggle.Wt-slider-h .handle {
+  background-image: none;
+}
+
+.Wt-slider-h .handle.disabled,
+.Wt-slider-h .handle[disabled],
+fieldset[disabled] .Wt-slider-h .handle,
+.Wt-slider-h .handle.disabled:hover,
+.Wt-slider-h .handle[disabled]:hover,
+fieldset[disabled] .Wt-slider-h .handle:hover,
+.Wt-slider-h .handle.disabled:focus,
+.Wt-slider-h .handle[disabled]:focus,
+fieldset[disabled] .Wt-slider-h .handle:focus,
+.Wt-slider-h .handle.disabled:active,
+.Wt-slider-h .handle[disabled]:active,
+fieldset[disabled] .Wt-slider-h .handle:active,
+.Wt-slider-h .handle.disabled.active,
+.Wt-slider-h .handle[disabled].active,
+fieldset[disabled] .Wt-slider-h .handle.active {
+  background-color: #ffffff;
+  border-color: #cccccc;
+}
+
+.Wt-slider-h .handle:hover {
+  background-color: #e6e6e6;
+  background-position: 0 -15px;
+}
+
+.Wt-slider-h .handle:active {
+  background-color: #e6e6e6;
+  background-color: #d9d9d9 \9;
+  background-image: none;
+  outline: 0;
+}
+
+.Wt-slider-v .Wt-slider-bg {
+  margin: 5px 0;
+}
+
+.Wt-slider-v .Wt-w {
+  position: absolute;
+  left: 50%;
+  width: 8px;
+  height: 100%;
+  margin-left: -5px;
+  background: #eeeeee;
+  border: 1px solid #dddddd;
+  border-radius: 4px;
+}
+
+.Wt-slider-v .fill {
+  bottom: 0;
+  left: 50%;
+  width: 8px;
+  margin-left: -5px;
+  background: #428bca;
+  border: 1px solid #428bca;
+  border-radius: 4px;
+}
+
+.Wt-slider-v .handle {
+  left: 50% !important;
+  width: 18px !important;
+  margin-left: -10px;
+  color: #333333;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-color: #cccccc;
+  border-radius: 4px;
+}
+
+.Wt-slider-v .handle:hover,
+.Wt-slider-v .handle:focus,
+.Wt-slider-v .handle:active,
+.Wt-slider-v .handle.active,
+.open .dropdown-toggle.Wt-slider-v .handle {
+  color: #333333;
+  background-color: #ebebeb;
+  border-color: #adadad;
+}
+
+.Wt-slider-v .handle:active,
+.Wt-slider-v .handle.active,
+.open .dropdown-toggle.Wt-slider-v .handle {
+  background-image: none;
+}
+
+.Wt-slider-v .handle.disabled,
+.Wt-slider-v .handle[disabled],
+fieldset[disabled] .Wt-slider-v .handle,
+.Wt-slider-v .handle.disabled:hover,
+.Wt-slider-v .handle[disabled]:hover,
+fieldset[disabled] .Wt-slider-v .handle:hover,
+.Wt-slider-v .handle.disabled:focus,
+.Wt-slider-v .handle[disabled]:focus,
+fieldset[disabled] .Wt-slider-v .handle:focus,
+.Wt-slider-v .handle.disabled:active,
+.Wt-slider-v .handle[disabled]:active,
+fieldset[disabled] .Wt-slider-v .handle:active,
+.Wt-slider-v .handle.disabled.active,
+.Wt-slider-v .handle[disabled].active,
+fieldset[disabled] .Wt-slider-v .handle.active {
+  background-color: #ffffff;
+  border-color: #cccccc;
+}
+
+.Wt-slider-v .handle:hover {
+  background-color: #e6e6e6;
+  background-position: 0 -15px;
+}
+
+.Wt-slider-v .handle:active {
+  background-color: #e6e6e6;
+  background-color: #d9d9d9 \9;
+  background-image: none;
+  outline: 0;
+}
+
+/*
+ * WSpinBox
+ */
+
+.Wt-spinbox {
+  padding-right: 16px;
+  background-image: url('spin-buttons.png');
+  background-position: right top;
+  background-repeat: no-repeat;
+}
+
+.Wt-spinbox.up {
+  background-position: right -34px;
+}
+
+.Wt-spinbox.dn {
+  background-position: right -68px;
+}
+
+.Wt-spinbox::-ms-clear {
+  display: none;
+}
+
+/*
+ * WTimeEdit
+ */
+
+.Wt-timeedit {
+  padding-right: 40px;
+  background-image: url('time-edit-button.png');
+  background-position: right top;
+  background-repeat: no-repeat;
+}
+
+.Wt-timeedit:hover {
+  cursor: default;
+  background-position: right -34px;
+}
+
+.Wt-timeedit:active {
+  cursor: default;
+  background-position: right -68px;
+}
+
+.Wt-timeedit::-ms-clear {
+  display: none;
+}
