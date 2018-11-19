@@ -3,35 +3,58 @@ from flask_api import FlaskAPI
 
 class API(object):
 
-    def __init__(self, player):
+    def __init__(self, player, station_manager):
         self.__app = FlaskAPI(__name__)
         self.__player = player
+        self.__station_manager = station_manager
 
     def start_api(self):
         self.__define_routes()
         self.__app.run(debug=True)
 
     def __define_routes(self):
-        @self.__app.route('/station/current/')
+        @self.__app.route('/station/current/',   methods=['GET'])
         def get_current_station():
             current_station = self.__player.get_current_station_url()
-            # current_station = "No current station" if current_station == None else current_station
-            return {'url': current_station}
+            if current_station != None:
+                return {'url': current_station}
+            else:
+                return {}
 
-        @self.__app.route('/station/<int:id>/play')
-        def play_station():
-            station_url = "https://www.radioalmaina.org/radio_almaina.m3u"
-            is_played_succesfully = self.__player.play(station_url)
-            return {'result': is_played_succesfully}
+        @self.__app.route('/station/<int:id>',  methods=['GET'])
+        def get_station_info(id):
+            if(id < len(self.__station_manager.get_stations_list())):
+                station = self.__station_manager.get_stations_list()[id]
+                return {'result': station}
+            else:
+                return {'result': False}
 
-        @self.__app.route('/station/stop')
+        @self.__app.route('/station/<int:id>',  methods=['DELETE'])
+        def remove_station(id):
+            if(id < len(self.__station_manager.get_stations_list())):
+                station = self.__station_manager.remove_station(id)
+                return {'result': station}
+            else:
+                return {'result': False}
+
+        @self.__app.route('/station/<int:id>/play',  methods=['POST'])
+        def play_station(id):
+            if(id < len(self.__station_manager.get_stations_list())):
+                station_url = self.__station_manager.get_stations_list()[id]['url']
+                self.__player.play(station_url)
+                is_played_successfully = self.__player.is_played_successfully()
+                return {'result': is_played_successfully}
+            else:
+                return {'result': False}
+
+        @self.__app.route('/station/stop',   methods=['POST'])
         def stop_station():
-            self.__player.stop_sound()
+            is_deleted = self.__player.stop_sound()
+            return {'result': is_deleted}
 
-        @self.__app.route('/station/stations')
+        @self.__app.route('/station/stations', methods=['GET'])
         def list_stations():
-            list_of_stations = list()
-            return list_of_stations
+            return self.__station_manager.get_stations_list()
 
         @self.__app.route('/alarm/current',  methods=['GET'])
         def get_current_alarm():
