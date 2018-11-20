@@ -1,5 +1,1 @@
-{"stations":[
-    { "name":"Radio Almaina", "url":"https://www.radioalmaina.org/radio_almaina.m3u" },
-    { "name":"WCPE", "url":"http://audio-ogg.ibiblio.org:8000/wcpe.ogg.m3u" },
-    { "name":"Rock FM", "url":"http://195.10.10.222/cope/rockfm.mp3" }
-]}
+{"stations": [{"name": "Radio Almaina", "url": "https://www.radioalmaina.org/radio_almaina.m3u"}, {"name": "Rock FM", "url": "http://195.10.10.222/cope/rockfm.mp3"}]}

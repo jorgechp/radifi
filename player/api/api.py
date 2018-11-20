@@ -33,6 +33,7 @@ class API(object):
         def remove_station(id):
             if(id < len(self.__station_manager.get_stations_list())):
                 station = self.__station_manager.remove_station(id)
+                self.__station_manager.save_stations_list()
                 return {'result': station}
             else:
                 return {'result': False}
