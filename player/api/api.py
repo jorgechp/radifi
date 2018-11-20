@@ -1,4 +1,5 @@
 from flask_api import FlaskAPI
+from flask import request, json
 
 
 class API(object):
@@ -28,6 +29,14 @@ class API(object):
                 return {'result': station}
             else:
                 return {'result': False}
+
+        @self.__app.route('/station',  methods=['PUT'])
+        def add_station():
+            content = request.get_json(silent=True)
+            print("hola")
+
+
+
 
         @self.__app.route('/station/<int:id>',  methods=['DELETE'])
         def remove_station(id):
