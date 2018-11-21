@@ -1,5 +1,5 @@
 from flask_api import FlaskAPI
-from flask import request, json
+from flask import request, abort
 
 
 class API(object):
@@ -32,9 +32,24 @@ class API(object):
 
         @self.__app.route('/station',  methods=['PUT'])
         def add_station():
-            content = request.get_json(silent=True)
-            print("hola")
+            if not request.json or not 'name' in request.json or not 'url' in request.json:
+                abort(400)
 
+            url = request.json['url']
+            name = request.json['name']
+            id =  self.__station_manager.add_station(name,url)
+
+            if id > -1:
+                self.__station_manager.save_stations_list()
+
+                new_station = {
+                    'id' : id,
+                    'name' : name,
+                    'url' : url
+                }
+
+                return new_station
+            abort(409) #Throws a HTML ERROR CODE 409
 
 
 
