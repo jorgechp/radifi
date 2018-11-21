@@ -1,13 +1,14 @@
 from flask_api import FlaskAPI
-from flask import request, abort
+from flask import request, abort, Response
 
 
 class API(object):
 
-    def __init__(self, player, station_manager):
+    def __init__(self, player, station_manager,alarm_manager):
         self.__app = FlaskAPI(__name__)
         self.__player = player
         self.__station_manager = station_manager
+        self.__alarm_manager = alarm_manager
 
     def start_api(self):
         self.__define_routes()
@@ -81,17 +82,35 @@ class API(object):
         def list_stations():
             return self.__station_manager.get_stations_list()
 
-        @self.__app.route('/alarm/current',  methods=['GET'])
+        @self.__app.route('/alarm',  methods=['GET'])
         def get_current_alarm():
-            pass
+            current_alarm = self.__alarm_manager.get_current_alarm()
+            res = {'current_alarm' : current_alarm}
 
-        @self.__app.route('/alarm/current',  methods=['POST'])
+            return Response(res, status=200, mimetype='application/json')
+
+        @self.__app.route('/alarm',  methods=['PUT'])
         def set_alarm():
-            pass
+            if not request.json or not 'current_alarm' in request.json:
+                abort(400)
 
-        @self.__app.route('/alarm/current',  methods=['DELETE'])
+            self.__alarm_manager.set_current_alarm(request.json['current_alarm'])
+            return Response("", status=200, mimetype='application/json')
+
+
+        @self.__app.route('/alarm',  methods=['DELETE'])
         def remove_alarm():
-            pass
+            self.__alarm_manager.set_current_alarm("00:00:00")
+            return Response("", status=200, mimetype='application/json')
+
+        @self.__app.route('/alarm', methods=['PATCH'])
+        def enable_alarm():
+            if not request.json or not 'enabled' in request.json:
+                return Response("", status=404, mimetype='application/json')
+            if request.json['enabled'] == "yes" or request.json['enabled'] == "no":
+                self.__alarm_manager.set_current_alarm(request.json['enabled'])
+                return Response("", status=200, mimetype='application/json')
+            return Response("", status=204, mimetype='application/json')
 
 
         @self.__app.route('/time/current',  methods=['GET'])
