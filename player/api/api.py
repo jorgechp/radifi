@@ -1,5 +1,5 @@
 from flask_api import FlaskAPI
-from flask import request, abort, Response
+from flask import request, Response
 
 
 class API(object):
@@ -101,9 +101,10 @@ class API(object):
 
         @self.__app.route('/alarm',  methods=['PUT'])
         def set_alarm():
-            if not request.json or not 'current_alarm' in request.json:
+            if not request.json or not 'hour' in request.json or not 'minute' in request.json:
                 return Response({}, status=400, mimetype='application/json')
-            self.__alarm_manager.set_current_alarm(request.json['current_alarm'])
+            self.__alarm_manager.set_current_alarm(request.json['hour'])
+            self.__alarm_manager.set_current_alarm(request.json['minute'])
             self.__alarm_manager.save_status()
             return Response("", status=200, mimetype='application/json')
 
