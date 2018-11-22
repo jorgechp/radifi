@@ -19,27 +19,34 @@ class API(object):
         def get_current_station():
             current_station = self.__player.get_current_station_url()
             if current_station != None:
-                return {'url': current_station}
+                res = {'url': current_station}
+                status = 200
             else:
-                return {}
+                res = {}
+                status = 404
+            return Response(res, status=status, mimetype='application/json')
 
         @self.__app.route('/station/<int:id>',  methods=['GET'])
         def get_station_info(id):
             if(id < len(self.__station_manager.get_stations_list())):
                 station = self.__station_manager.get_stations_list()[id]
-                return {'result': station}
+                res = {'result': station}
+                status = 200
             else:
-                return {'result': False}
+                res = {'result': False}
+                status = 404
+            return Response(res, status=status, mimetype='application/json')
 
         @self.__app.route('/station',  methods=['PUT'])
         def add_station():
             if not request.json or not 'name' in request.json or not 'url' in request.json:
-                abort(400)
+                return Response({}, status=400, mimetype='application/json')
 
             url = request.json['url']
             name = request.json['name']
             id =  self.__station_manager.add_station(name,url)
-
+            new_station = {}
+            status = 409
             if id > -1:
                 self.__station_manager.save_stations_list()
 
@@ -48,20 +55,20 @@ class API(object):
                     'name' : name,
                     'url' : url
                 }
-
-                return new_station
-            abort(409) #Throws a HTML ERROR CODE 409
-
-
+                status = 200
+            return Response(new_station, status=status, mimetype='application/json')  # Throws a HTML ERROR CODE 409
 
         @self.__app.route('/station/<int:id>',  methods=['DELETE'])
         def remove_station(id):
             if(id < len(self.__station_manager.get_stations_list())):
                 station = self.__station_manager.remove_station(id)
                 self.__station_manager.save_stations_list()
-                return {'result': station}
+                res = {'result': station}
+                status = 200
             else:
-                return {'result': False}
+                res = {'result': False}
+                status = 404
+            return Response(res, status=status, mimetype='application/json')
 
         @self.__app.route('/station/<int:id>/play',  methods=['POST'])
         def play_station(id):
@@ -69,38 +76,42 @@ class API(object):
                 station_url = self.__station_manager.get_stations_list()[id]['url']
                 self.__player.play(station_url)
                 is_played_successfully = self.__player.is_played_successfully()
-                return {'result': is_played_successfully}
+                res = {'result': is_played_successfully}
+                status = 200
             else:
-                return {'result': False}
+                res = {'result': False}
+                status = 404
+            return Response(res, status=status, mimetype='application/json')
 
         @self.__app.route('/station/stop',   methods=['POST'])
         def stop_station():
             is_deleted = self.__player.stop_sound()
-            return {'result': is_deleted}
+            res = {'result': is_deleted}
+            return Response(res, status=200, mimetype='application/json')
 
         @self.__app.route('/station/stations', methods=['GET'])
         def list_stations():
-            return self.__station_manager.get_stations_list()
+            return Response(self.__station_manager.get_stations_list(), status=200, mimetype='application/json')
 
         @self.__app.route('/alarm',  methods=['GET'])
         def get_current_alarm():
             current_alarm = self.__alarm_manager.get_current_alarm()
             res = {'current_alarm' : current_alarm}
-
             return Response(res, status=200, mimetype='application/json')
 
         @self.__app.route('/alarm',  methods=['PUT'])
         def set_alarm():
             if not request.json or not 'current_alarm' in request.json:
-                abort(400)
-
+                return Response({}, status=400, mimetype='application/json')
             self.__alarm_manager.set_current_alarm(request.json['current_alarm'])
+            self.__alarm_manager.save_status()
             return Response("", status=200, mimetype='application/json')
 
 
         @self.__app.route('/alarm',  methods=['DELETE'])
         def remove_alarm():
             self.__alarm_manager.set_current_alarm("00:00:00")
+            self.__alarm_manager.save_status()
             return Response("", status=200, mimetype='application/json')
 
         @self.__app.route('/alarm', methods=['PATCH'])
@@ -109,6 +120,7 @@ class API(object):
                 return Response("", status=404, mimetype='application/json')
             if request.json['enabled'] == "yes" or request.json['enabled'] == "no":
                 self.__alarm_manager.set_current_alarm(request.json['enabled'])
+                self.__alarm_manager.save_status()
                 return Response("", status=200, mimetype='application/json')
             return Response("", status=204, mimetype='application/json')
 
