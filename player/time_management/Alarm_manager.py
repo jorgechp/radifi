@@ -14,18 +14,22 @@ class Alarm_manager(object):
         self.__config.read(CONFIG_FILE_URL)
         self.__system_crontab = self.__prepare_crontab_file()
         self.__system_crontab_job = self.__prepare_crontab_job()
+        self.__prepare_alarm()
+        self.__config_alarm = self.__config['ALARM']
+        self.toggle_alarm(self.__config_alarm.getboolean('alarm_enabled'))
+        self.set_current_alarm(self.__config_alarm['alarm_hour'],self.__config_alarm['alarm_minute'])
 
+    def __prepare_alarm(self):
         if 'ALARM' not in self.__config:
             self.__config['ALARM'] = {}
             self.__config['ALARM']['alarm_enabled'] = "no"
             self.__config['ALARM']['alarm_hour'] = "00"
             self.__config['ALARM']['alarm_minute'] = "00"
+            self.__config['ALARM']['alarm_minute'] = "00"
+            self.__config['ALARM']['default_alarm_path'] = "./resources/default_alarm.ogg"
+            self.__config['ALARM']['default_station_url'] = ""
 
             self.save_status()
-
-        self.__config_alarm = self.__config['ALARM']
-        self.toggle_alarm(self.__config_alarm.getboolean('alarm_enabled'))
-        self.set_current_alarm(self.__config_alarm['alarm_hour'],self.__config_alarm['alarm_minute'])
 
     def __prepare_crontab_file(self):
         if path.isfile(CRONTAB_FILE_URL):

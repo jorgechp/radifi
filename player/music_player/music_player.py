@@ -1,3 +1,4 @@
+import configparser
 import requests
 import vlc
 import os
@@ -5,6 +6,7 @@ import time
 
 from threading import Event, Thread
 
+CONFIG_FILE_URL = 'config/radifi_configuration.ini'
 
 class Music_player(object):
 
@@ -12,6 +14,8 @@ class Music_player(object):
         """
         Default constructor
         """
+        self.__config = configparser.ConfigParser()
+        self.__config.read(CONFIG_FILE_URL)
         self.__vlc_instance = vlc.Instance()
         self.__ready = ready_event
         self.__url = None
@@ -26,13 +30,11 @@ class Music_player(object):
 
     def play(self,url):
         self.__url = url
-        self.__thread = Thread(target=self.__play_sound)
-        self.__thread.start()
+        self.__play_sound()
 
     def __play_sound(self):
         """
         Play the url specified. It can be a remote url or a local file.
-        :param url: The url with the file to be played.
         """
 
         if self.is_playing():
@@ -50,8 +52,7 @@ class Music_player(object):
             media_list = self.__vlc_instance.media_list_new([self.__url])
             if(is_local_file):
                 self.__player = self.__vlc_instance.media_player_new()
-                media_to_set = self.__vlc_instance.media_new(url)
-                media_list.get_mrl()
+                media_to_set = self.__vlc_instance.media_new(self.__url)
                 self.__player.set_media(media_to_set)
             else:
                 self.__player = self.__vlc_instance.media_list_player_new()
@@ -64,6 +65,18 @@ class Music_player(object):
             self._error_code = 2
             self.__is_played_succesfully = False
 
+
+    def play_alarm(self, is_default_song = 0):
+        alarm_configuration = self.__config['ALARM']
+        url_to_play = alarm_configuration['default_station_url']
+        if(is_default_song or len(url_to_play) == 0):
+            abs_path = os.path.abspath(alarm_configuration['default_alarm_path'])
+            url_to_play = "file://" + abs_path
+        return self.play(url_to_play)
+
+    def stop_player(self):
+        self.__player.stop()
+        self.__player = None
 
     def stop_sound(self):
         if(self.__player != None):
