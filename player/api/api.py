@@ -106,14 +106,14 @@ class API(object):
             self.__alarm_manager.set_current_alarm(request.json['hour'])
             self.__alarm_manager.set_current_alarm(request.json['minute'])
             self.__alarm_manager.save_status()
-            return Response("", status=200, mimetype='application/json')
+            return Response("", status=204, mimetype='application/json')
 
 
         @self.__app.route('/alarm',  methods=['DELETE'])
         def remove_alarm():
             self.__alarm_manager.set_current_alarm("00:00:00")
             self.__alarm_manager.save_status()
-            return Response("", status=200, mimetype='application/json')
+            return Response("", status=204, mimetype='application/json')
 
         @self.__app.route('/alarm', methods=['PATCH'])
         def enable_alarm():
@@ -125,6 +125,23 @@ class API(object):
                 return Response("", status=200, mimetype='application/json')
             return Response("", status=204, mimetype='application/json')
 
+        @self.__app.route('/alarm/play', methods=['GET'])
+        def play_alarm():
+            if not request.args or not 'defaultSong' in request.args:
+                is_default_song = 0
+            else:
+                is_default_song = request.args.get('defaultSong')
+            is_default_song_as_boolean = bool(is_default_song)
+            is_played = self.__player.play_alarm(is_default_song_as_boolean)
+            if is_played:
+                return Response("", status=204, mimetype='application/json')
+            else:
+                return Response("", status=406, mimetype='application/json')
+
+        @self.__app.route('/alarm/stop', methods=['GET'])
+        def stop_alarm():
+            self.__player.stop_player()
+            return Response("", status=204, mimetype='application/json')
 
         @self.__app.route('/time/current',  methods=['GET'])
         def get_current_time():
