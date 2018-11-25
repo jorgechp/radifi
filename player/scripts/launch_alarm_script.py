@@ -23,7 +23,9 @@ def execute(url,port):
         num_of_trials = num_of_trials + 1
 
     if num_of_trials == TRIALS_LIMIT:
+        print("FATAL ERROR: THE NUMBER OF REQUESTS EXECUTED EXCEDEED THE LIMIT WITHOUT SUCCESS. THE ALARM HAS NOT BEEN TRIGGERED!!!", file=sys.stderr)
         sys.exit(2)
+    print("THE ALARM HAS BEEN TRIGGERED, HAVE A GOOD DAY")
     sys.exit(0)
 
 if __name__ == '__main__':
