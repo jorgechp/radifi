@@ -1,9 +1,13 @@
 import configparser
+from configparser import ConfigParser
 
 
 class ConfigManager(object):
 
-    def __init__(self, config_path):
+    _config_path: str
+    _config: ConfigParser
+
+    def __init__(self, config_path: str):
         self._config_path = config_path
         self._config = configparser.ConfigParser(allow_no_value=True)
         self._config.read(config_path)
