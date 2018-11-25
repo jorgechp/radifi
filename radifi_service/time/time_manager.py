@@ -2,11 +2,11 @@ import datetime
 import os
 import subprocess
 
-class Time_manager(object):
+class TimeManager(object):
 
     def __init__(self, config):
-        self.__config = config
-        self.__config_time = self.__config.get_properties_group('TIME')
+        self._config = config
+        self._config_time = self._config.get_properties_group('TIME')
 
     def check_root_privileges(self):
         return os.geteuid() == 0
@@ -15,8 +15,8 @@ class Time_manager(object):
         subprocess.call(['sudo', 'python3'])
 
     def update_system_time(self):
-        time_zone = self.__config_time['time_zone']
-        ntp_server = self.__config_time['server']
+        time_zone = self._config_time['time_zone']
+        ntp_server = self._config_time['server']
         os.environ['TZ'] = time_zone
         os.system("ntpdate -s  " + ntp_server)
 
