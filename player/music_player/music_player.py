@@ -72,7 +72,8 @@ class Music_player(object):
         if(is_default_song or len(url_to_play) == 0):
             abs_path = os.path.abspath(alarm_configuration['default_alarm_path'])
             url_to_play = "file://" + abs_path
-        return self.play(url_to_play)
+        self.play(url_to_play)
+
 
     def stop_player(self):
         self.__player.stop()

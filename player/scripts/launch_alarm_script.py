@@ -3,29 +3,36 @@ import requests
 from time import sleep
 
 TRIALS_LIMIT = 10
-if len(sys.argv) != 3:
-    error_message = """Usage: ./launch_alarm_script.py <url> <port>"""
-    print(error_message, file=sys.stderr)
-    sys.exit(1)
 
-url = sys.argv[1]
-port = sys.argv[2]
-path = "/alarm/play"
-param_not_default_song = "defaultSong=0"
-param_default_song = "defaultSong=1"
+def execute(url,port):
 
-url_parsed = url + ":" + port + path + "?"
-url_to_call = url_parsed + param_not_default_song
+    path = "/alarm/play"
+    param_not_default_song = "defaultSong=0"
+    param_default_song = "defaultSong=1"
 
-response = requests.get(url_to_call)
+    url_parsed = url + ":" + str(port) + path + "?"
+    url_to_call = url_parsed + param_not_default_song
 
-url_to_call = url_parsed + param_default_song
-num_of_trials = 0
-while(response.status_code != 200 and num_of_trials < TRIALS_LIMIT):
-    sleep(5)
     response = requests.get(url_to_call)
-    num_of_trials = num_of_trials + 1
 
-if num_of_trials == TRIALS_LIMIT:
-    sys.exit(2)
-sys.exit(0)
+    url_to_call = url_parsed + param_default_song
+    num_of_trials = 0
+    while(response.status_code != 200 and num_of_trials < TRIALS_LIMIT):
+        sleep(5)
+        response = requests.get(url_to_call)
+        num_of_trials = num_of_trials + 1
+
+    if num_of_trials == TRIALS_LIMIT:
+        sys.exit(2)
+    sys.exit(0)
+
+if __name__ == '__main__':
+    if len(sys.argv) != 3:
+        error_message = """Usage: ./launch_alarm_script.py <url> <port>"""
+        print(error_message, file=sys.stderr)
+        sys.exit(1)
+
+    url = sys.argv[1]
+    url = url[:-1] if url[-1] == '/' else url  # Remove last / from the url
+    port = sys.argv[2]
+    execute(url,port)

@@ -3,4 +3,4 @@ requests
 Flask-API
 flask
 validators
-python-crontab
+schedule
