@@ -1,30 +1,39 @@
+"""
+This is the main module of Radifi System. This module instantiate all the managers
+required for managing the Radifi System as well as the APIRest, whichs is generated
+by the FlaskAPI.
 
+MANAGERS:
+
+    * Station Manager - Manages the stations list.
+    * Alarm Manager - Manager the Alarm functionality.
+    * Time Manager - Deal with the Operative System Date
+    * Configuration Manager - Load and handle all the Radifi settings.
+"""
+
+from threading import Event
 from api.api import API
 from config.config_manager import ConfigManager
 from music.music_player import MusicPlayer
-from threading import Event
-
 from station.station_manager import StationManager
 from planning.time_manager import TimeManager
 from planning.alarm_manager import AlarmManager
 
 CONFIG_FILE_URL = 'config/radifi_configuration.ini'
 
-config = ConfigManager(CONFIG_FILE_URL)
-config.prepare_all_configs()
-general_config = config.get_properties_group('GENERAL')
+CONFIG: ConfigManager = ConfigManager(CONFIG_FILE_URL)
+CONFIG.prepare_all_configs()
 
-time_manager = TimeManager(config)
-
-
-alarm_manager = AlarmManager(config)
-station_manager = StationManager()
-alarm_manager.save_status()
-alarm_manager.toggle_alarm(True)
+TIME_MANAGER = TimeManager(CONFIG)
 
 
-ready_event = Event()
-music_player = MusicPlayer(ready_event)
-api_rest = API(music_player,station_manager,time_manager,alarm_manager)
-api_rest.start_api()
+ALARM_MANAGER = AlarmManager(CONFIG)
+STATION_MANAGER = StationManager()
+ALARM_MANAGER.save_status()
+ALARM_MANAGER.toggle_alarm(True)
 
+
+READY_EVENT = Event()
+MUSIC_PLAYER = MusicPlayer(READY_EVENT)
+API_REST = API(MUSIC_PLAYER, STATION_MANAGER, TIME_MANAGER, ALARM_MANAGER)
+API_REST.start_api()
