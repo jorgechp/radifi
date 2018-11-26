@@ -187,8 +187,8 @@ class API:
             return self._handle_http_response("", 204)
 
     def __define_time_routes(self):
-        @self._app.route('/time', methods=['GET'])
+        @self._app.route('/planning', methods=['GET'])
         def get_current_time():
             current_time = self._time_manager.get_current_time()
-            res = {"time" : str(current_time)}
+            res = {"planning" : str(current_time)}
             return self._handle_http_response(res, 200)

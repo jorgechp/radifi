@@ -2,7 +2,7 @@ import configparser
 import requests
 import vlc
 import os
-import time
+import planning
 
 from threading import Event, Thread
 
@@ -59,7 +59,7 @@ class MusicPlayer(object):
                 self._player.set_media_list(media_list)
 
             self._player.play()
-            time.sleep(0.5)
+            planning.sleep(0.5)
             self._is_played_succesfully = True
         else:
             self._error_code = 2

@@ -5,8 +5,8 @@ from music.music_player import MusicPlayer
 from threading import Event
 
 from station.station_manager import StationManager
-from time.alarm_manager import AlarmManager
-from time.time_manager import TimeManager
+from planning.time_manager import TimeManager
+from planning.alarm_manager import AlarmManager
 
 CONFIG_FILE_URL = 'config/radifi_configuration.ini'
 
