@@ -1,16 +1,16 @@
 
 from api.api import API
-from config.Config_manager import Config_manager
+from config.config_manager import ConfigManager
 from music.music_player import MusicPlayer
 from threading import Event
 
 from station.station_manager import StationManager
-from time.Alarm_manager import AlarmManager
-from time.Time_manager import TimeManager
+from time.alarm_manager import AlarmManager
+from time.time_manager import TimeManager
 
 CONFIG_FILE_URL = 'config/radifi_configuration.ini'
 
-config = Config_manager(CONFIG_FILE_URL)
+config = ConfigManager(CONFIG_FILE_URL)
 config.prepare_all_configs()
 general_config = config.get_properties_group('GENERAL')
 
