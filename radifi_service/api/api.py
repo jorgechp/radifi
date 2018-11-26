@@ -20,7 +20,7 @@ class API:
 
     def __init__(self, player_manager, station_manager, time_manager, alarm_manager):
         """
-        Default constructor of the class.
+        Constructor of the class.
 
         ARGUMENTS:
             :type player_manager: MusicPlayer
@@ -73,10 +73,9 @@ class API:
         data_as_json = json.dumps(data_response, ensure_ascii=False)
         return Response(data_as_json, status=html_code, mimetype=API._DEFAULT_MIMETPYE)
 
-
-    ##
-    ## ENTRY POINTS FOR STATION MANAGMENT ROUTES
-    ##
+    #
+    # ENTRY POINTS FOR STATION MANAGMENT ROUTES
+    #
     def _define_station_routes(self):
         """
         Define entry points functions related with the station management.
@@ -150,7 +149,7 @@ class API:
                 409 otherwise.
                 :rtype: Response
             """
-            if not request.json or not 'name' in request.json or not 'url' in request.json:
+            if not request.json or 'name' not in request.json or 'url' not in request.json:
                 return Response({}, status=400, mimetype='application/json')
 
             url = request.json['url']
@@ -233,13 +232,13 @@ class API:
         @self._app.route('/station/stop', methods=['POST'])
         def stop_station():
             """
-            Stops the straming service. A POST request must be performed.
+            Stops the streaming service. A POST request must be performed.
 
             RETURN:
                 :return: A Response object. 200 status code if the station is playing.
                 :rtype: Response
             """
-            is_stopped = self._player_manager.stop_sound()
+            is_stopped = self._player_manager.stop_player()
             res = {'result': is_stopped}
             return self._handle_http_response(res, 200)
 
@@ -255,11 +254,9 @@ class API:
             station_list = self._station_manager.get_stations_list()
             return self._handle_http_response(station_list, 200)
 
-
-
-    ##
-    ## ENTRY POINTS FOR ALARM MANAGMENT ROUTES
-    ##
+    #
+    # ENTRY POINTS FOR ALARM MANAGMENT ROUTES
+    #
     def _define_alarm_routes(self):
         """
         Define entry points functions related with the alarm management.
@@ -270,8 +267,6 @@ class API:
             * Stop the alarm
             * Change the station to play.
         """
-
-
 
         @self._app.route('/alarm', methods=['GET'])
         def get_current_alarm():
@@ -307,7 +302,7 @@ class API:
                 :return: A Response object. 200 status code if the station is playing.
                 :rtype: Response
             """
-            if not request.json or not 'hour' in request.json or not 'minute' in request.json:
+            if not request.json or 'hour' not in request.json or 'minute' not in request.json:
                 return self._handle_http_response("", 400)
             self._alarm_manager.set_current_alarm(request.json['hour'])
             self._alarm_manager.set_current_alarm(request.json['minute'])
@@ -344,7 +339,7 @@ class API:
                    400 otherwise.
                 :rtype: Response
             """
-            if not request.json or not 'enabled' in request.json:
+            if not request.json or 'enabled' not in request.json:
                 return self._handle_http_response("", 404)
             if request.json['enabled'] == "yes" or request.json['enabled'] == "no":
                 self._alarm_manager.set_current_alarm(request.json['enabled'])
@@ -370,7 +365,7 @@ class API:
                   406 otherwise.
                 :rtype: Response
             """
-            if not request.args or not 'defaultSong' in request.args:
+            if not request.args or 'defaultSong' not in request.args:
                 is_default_song = 0
             else:
                 is_default_song = request.args.get('defaultSong')
@@ -394,10 +389,9 @@ class API:
             self._player_manager.stop_player()
             return self._handle_http_response("", 204)
 
-
-    ##
-    ## ENTRY POINTS FOR TIME MANAGMENT ROUTES
-    ##
+    #
+    # ENTRY POINTS FOR TIME MANAGMENT ROUTES
+    #
     def _define_time_routes(self):
         """
         Define entry points functions related with the time management.
@@ -420,9 +414,9 @@ class API:
             res = {"time": str(current_time)}
             return self._handle_http_response(res, 200)
 
-    ##
-    ## ENTRY POINTS FOR OTHER ROUTES
-    ##
+    #
+    # ENTRY POINTS FOR OTHER ROUTES
+    #
     def _define_other_routes(self):
         """
         Define entry points for other types or functionality:
