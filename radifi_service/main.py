@@ -20,6 +20,7 @@ from planning.time_manager import TimeManager
 from planning.alarm_manager import AlarmManager
 
 CONFIG_FILE_URL = 'config/radifi_configuration.ini'
+STATION_FILE_URL = 'config/stations'
 
 CONFIG: ConfigManager = ConfigManager(CONFIG_FILE_URL)
 CONFIG.prepare_all_configs()
@@ -28,7 +29,7 @@ TIME_MANAGER = TimeManager(CONFIG)
 
 
 ALARM_MANAGER = AlarmManager(CONFIG)
-STATION_MANAGER = StationManager()
+STATION_MANAGER = StationManager(STATION_FILE_URL)
 ALARM_MANAGER.save_status()
 ALARM_MANAGER.toggle_alarm(True)
 
