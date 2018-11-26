@@ -85,7 +85,7 @@ class StationManager:
                 and self._is_correct_url(url_of_station):
             station_entry = {"name": name_of_station, "url": url_of_station}
             self._station_parsed_list.append(station_entry)
-            return len(self._station_parsed_list)
+            return len(self._station_parsed_list) - 1
 
         return -1
 
@@ -129,4 +129,8 @@ class StationManager:
         RETURN
             :return: True if the url format is correct. False otherwise.
         """
-        return url(url_to_parse)
+        is_parsed = url(url_to_parse)
+        if is_parsed:
+            return True
+        else:
+            return False
