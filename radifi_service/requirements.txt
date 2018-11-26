@@ -1,3 +1,4 @@
+vlc
 python-vlc
 requests
 Flask-API
