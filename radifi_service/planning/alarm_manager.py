@@ -1,6 +1,5 @@
 import threading
 import time
-
 import schedule
 
 from scripts import launch_alarm_script
