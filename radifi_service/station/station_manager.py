@@ -17,18 +17,27 @@ Down below, a example of station list is shown:
 import json
 from validators import url
 
-STATION_FILE = 'config/stations'
-
 
 class StationManager:
     """
     The class StationManager handle CRUD operations over the station list.
     """
-    def __init__(self):
+    def __init__(self, path_to_file):
         """
         Constructor
+
+        ARGUMENTS
+            :param path_to_file The path to the station file.
+            :rtype path_to_file: str
         """
-        with open(STATION_FILE, 'r') as station_file:
+        self._path_to_file = path_to_file
+        self._load_stations_from_file()
+
+    def _load_stations_from_file(self):
+        """
+        Load stations from file
+        """
+        with open(self._path_to_file, 'r') as station_file:
             self._station_parsed_json = json.load(station_file)
             self._station_parsed_list = self._station_parsed_json['stations']
 
@@ -85,7 +94,7 @@ class StationManager:
         Saves the station list.
         """
         self._station_parsed_json['stations'] = self._station_parsed_list
-        with open(STATION_FILE, 'w') as station_file:
+        with open(self._path_to_file, 'w') as station_file:
             json.dump(self._station_parsed_json, station_file)
 
     def _is_name_already_exits(self, name: str) -> bool:
