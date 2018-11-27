@@ -7,6 +7,10 @@ setup(
     author_email='jorge@jorgechp.com',
     packages=['api', 'config', 'music', 'planning', 'resources', 'scripts' , 'station', 'tests'],
     scripts=['main.py'],
+    entry_points={
+        'console_scripts':
+            ['radifi_service = radifi_service.__main___:main'
+             ]},
     license='LICENSE',
     description='Your own DIY internet radio service.',
     long_description=open('README.rst').read(),
