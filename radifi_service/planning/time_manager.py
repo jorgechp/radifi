@@ -14,11 +14,12 @@ import subprocess
 def check_root_privileges():
     """
     Checks if the current user has root privileges on the OS.
+    It's neccesary to be on a Unix based operative system.
 
     RETURN
         :return: True if the user has root privileges, False otherwise.
     """
-    return os.geteuid() == 0
+    return os.name != 'nt' and os.geteuid() == 0 #Check if OS is not Windows (os.name = 'nt')
 
 
 def claim_root_privileges():
@@ -43,7 +44,7 @@ def get_current_time():
 class TimeManager:
     """
     The class TimeManager handles the communication with the Operative Systems in respect
-    of changing and getting the current Date.
+    of changing and getting the current System date.
     """
 
     def __init__(self, config):

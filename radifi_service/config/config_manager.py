@@ -57,7 +57,7 @@ class ConfigManager:
         :param group_name: The group whose settings we wish to get.
         :type group_name: str
         :return: A dictionary.
-        :rtype: dict
+        :rtype: ConfigParser
         """
         if group_name in self._config:
             return self._config[group_name]
