@@ -1,3 +1,6 @@
+"""
+This module tests the module StationManager.
+"""
 import unittest
 
 from station.station_manager import StationManager
@@ -7,6 +10,9 @@ STATION_EMPTY_FILE_URL = 'stations_empty'
 
 
 class StationManagerTest(unittest.TestCase):
+    """
+    This class tests the class StationManager.
+    """
 
     def setUp(self):
         self.station_manager = StationManager(STATION_FILE_URL)
@@ -63,6 +69,24 @@ class StationManagerTest(unittest.TestCase):
         name_to_test = "Test Station with original name"
         is_duplicated = self.station_manager._is_name_already_exits(name_to_test)
         self.assertFalse(is_duplicated)
+
+    def test_save_stations_list(self):
+        name_to_test = "New test station"
+        station_list_length_first_station_manager = self._get_stations_length()
+        id_new_station = self.station_manager.add_station(name_to_test, "http://localhost")
+        self.station_manager.save_stations_list()
+        other_station_manager = StationManager(STATION_FILE_URL)
+        station_list_length_second_station_manager \
+            = len(other_station_manager.get_stations_list())
+        self.assertEqual(station_list_length_first_station_manager
+                         , station_list_length_second_station_manager - 1)
+        other_station_manager.remove_station(id_new_station)
+        station_list_length_third_station_manager \
+            = len(other_station_manager.get_stations_list())
+        other_station_manager.save_stations_list()
+        self.assertEqual(station_list_length_first_station_manager
+                         , station_list_length_third_station_manager)
+
 
 if __name__ == '__main__':
     unittest.main()
