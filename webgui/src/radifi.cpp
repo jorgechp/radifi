@@ -1,3 +1,4 @@
+#include <string>
 #include <Wt/WEnvironment.h>
 #include <Wt/WApplication.h>
 #include <Wt/WStackedWidget.h>
@@ -7,11 +8,16 @@
 #include "header.h"
 #include "playListContainer.h"
 #include "configurationContainer.h"
+#include "radifiServiceAPI.h"
 
 using namespace Wt;
 
 Radifi::Radifi()
 {
+  std::string host = "http://localhost";
+  int port = 5000;
+  this->apiREST = new RadifiServiceAPI(host,port);
+
   mainStack_ = new WStackedWidget();
   addWidget(Wt::cpp14::make_unique<Header>());
   addWidget(std::unique_ptr<WStackedWidget>(mainStack_));
