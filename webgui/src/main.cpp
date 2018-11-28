@@ -1,11 +1,10 @@
 #include <Wt/WApplication.h>
 #include <Wt/WServer.h>
 
-
 #include "radifi.h"
 
-
 using namespace Wt;
+
 
 std::unique_ptr<WApplication> createApplication(const WEnvironment& env)
 {
@@ -24,11 +23,8 @@ int main(int argc, char **argv)
 {
   try {
     WServer server(argc, argv, WTHTTP_CONFIGURATION);
-
     server.addEntryPoint(EntryPointType::Application, createApplication);
-
-
-    server.run();
+    server.run();  
   } catch (WServer::Exception& e) {
     std::cerr << e.what() << std::endl;
   } catch (std::exception &e) {
