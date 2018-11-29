@@ -3,6 +3,7 @@
 #include <Wt/WTable.h>
 
 #include "station.h"
+#include"radifiServiceAPI.h"
 
 using namespace Wt;
 
@@ -15,7 +16,7 @@ public:
   /**
   * Default public constructor.
   */
-  StationTableWidget();
+  StationTableWidget(RadifiServiceAPI& api);
 
   /**
   * Add a station to the table
@@ -36,6 +37,7 @@ public:
   */
   void generateTable();
 private:
+  RadifiServiceAPI* api;
 
   std::vector<Station> stationVector; /*A vector with Station instances*/
   /**

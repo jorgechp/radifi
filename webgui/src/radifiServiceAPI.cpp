@@ -40,7 +40,8 @@ bool RadifiServiceAPI::addNewRadioStation(string& name, string& url){
   string requestURL = this->connectionURL
                       + "/station";
   string jsonRequest = "{\"name\":\"" + name +"\", "
-                      + "\"url\": " + url + "\"}";
+                      + "\"url\": \"" + url + "\"}";
+  cout << jsonRequest << endl;
 
   RestClient::Response response = RestClient::put(requestURL,"application/json",jsonRequest);
 

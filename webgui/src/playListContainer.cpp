@@ -5,7 +5,8 @@
 
 using namespace Wt;
 
-PlayListContainer::PlayListContainer(const std::string& pageTitle)
+PlayListContainer::PlayListContainer(const std::string& pageTitle,
+                    RadifiServiceAPI& api)
                   :PageContainer(pageTitle){
 
 
@@ -14,7 +15,7 @@ PlayListContainer::PlayListContainer(const std::string& pageTitle)
 
   PageWidgetContainer* radioStationListContainer = addWidget(cpp14::make_unique<PageWidgetContainer>("Lista de emisoras"));
   WContainerWidget* tableWidgetContainer = radioStationListContainer->addWidget(cpp14::make_unique<WContainerWidget>());
-  StationTableWidget* tableWidget = tableWidgetContainer->addWidget(cpp14::make_unique<StationTableWidget>());
+  StationTableWidget* tableWidget = tableWidgetContainer->addWidget(cpp14::make_unique<StationTableWidget>(api));
 
   AddStationWidget* addStationWidget = addStationWidgetContainer->addWidget(cpp14::make_unique<AddStationWidget>(tableWidget));
 

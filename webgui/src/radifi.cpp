@@ -32,7 +32,7 @@ void Radifi::handleNavigation(const std::string &internalPath){
     mainStack_->setCurrentWidget(configurationContainer);
   }
   else{
-    PlayListContainer *playListContainer = mainStack_->addWidget(cpp14::make_unique<PlayListContainer>("Emisoras"));
+    PlayListContainer *playListContainer = mainStack_->addWidget(cpp14::make_unique<PlayListContainer>("Emisoras",*this->apiREST));
     mainStack_->setCurrentWidget(playListContainer);
   }
 }
