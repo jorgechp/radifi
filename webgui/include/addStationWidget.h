@@ -1,5 +1,6 @@
 #include<string>
 #include <Wt/WContainerWidget.h>
+
 #include"stationTableWidget.h"
 
 using namespace Wt;
@@ -10,12 +11,14 @@ using namespace Wt;
 class AddStationWidget : public WContainerWidget{
 private:
   StationTableWidget* tableWidget;
+  RadifiServiceAPI* apiRest;
+
   void addStation(std::string stationName, std::string radioURL);
 public:
   /*
   * Default constructor.
   */
-  AddStationWidget(StationTableWidget* tableWidgetToAdd );
+  AddStationWidget(StationTableWidget* tableWidgetToAdd);
 
 
 };

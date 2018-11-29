@@ -1,5 +1,7 @@
 #include<string>
+
 #include "pageContainer.h"
+#include"radifiServiceAPI.h"
 
 using namespace Wt;
 
@@ -12,5 +14,6 @@ public:
   * Public constructor.
   * @param pageTitle The title (header) of the page.
   */
-  PlayListContainer(const std::string& pageTitle);
+  PlayListContainer(const std::string& pageTitle,
+                    RadifiServiceAPI& api);
 };

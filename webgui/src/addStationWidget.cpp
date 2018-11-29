@@ -3,12 +3,13 @@
 #include <Wt/WLineEdit.h>
 #include <Wt/WLengthValidator.h>
 #include <Wt/WRegExpValidator.h>
+
 #include"stationTableWidget.h"
 #include"addStationWidget.h"
 
 using namespace Wt;
 
-AddStationWidget::AddStationWidget(StationTableWidget* tableWidgetToAdd ){
+AddStationWidget::AddStationWidget(StationTableWidget* tableWidgetToAdd){
   this->tableWidget = tableWidgetToAdd;
   Wt::WLineEdit *stationName = addWidget(Wt::cpp14::make_unique<Wt::WLineEdit>());
   auto stationNameValidator = std::make_shared<Wt::WLengthValidator>(1,200);
