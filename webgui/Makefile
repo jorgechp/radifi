@@ -3,7 +3,7 @@ RM_COMMAND = rm -f
 STD_FLAG = -std=c++14
 CPP_FLAGS = -c
 LD_LIBS = -L/usr/local/lib -lwthttp -lwt -lboost_system -lboost_thread \
-					-lboost_filesystem -lboost_program_options
+					-lboost_filesystem -lboost_program_options -lrestclient-cpp
 INCLUDE_FLAGS= -I/usr/local/include
 
 SRCS = $(wildcard src/*.cpp)

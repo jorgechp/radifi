@@ -1,6 +1,7 @@
 #include <Wt/WContainerWidget.h>
 #include <Wt/WStackedWidget.h>
 
+#include "radifiServiceAPI.h"
 
 /**
 * The main container widget.
@@ -13,6 +14,8 @@ public:
     */
     Radifi();
 
+      ~Radifi() { if(this->apiREST != 0) delete this->apiREST;}
+
 protected:
     /*
     * Handle the internal navigation.
@@ -21,4 +24,6 @@ protected:
 private:
     /* The stacked widget */
     Wt::WStackedWidget *mainStack_;
+
+    RadifiServiceAPI *apiREST;
 };

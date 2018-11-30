@@ -4,11 +4,14 @@
 #include <Wt/WTableRow.h>
 #include <Wt/WText.h>
 #include <Wt/WPushButton.h>
+
 #include "stationTableWidget.h"
+#include"radifiServiceAPI.h"
 
 using namespace Wt;
 
-StationTableWidget::StationTableWidget(){
+StationTableWidget::StationTableWidget(RadifiServiceAPI& api){
+  this->api = &api;
   addStyleClass("table form-inline");
 }
 
@@ -16,8 +19,15 @@ bool StationTableWidget::addStation(Station& stationToAdd){
   std::vector<Station>::iterator findIter =
     std::find(this->stationVector.begin(), this->stationVector.end(), stationToAdd);
   if(findIter == this->stationVector.end()){
-    this->stationVector.push_back(stationToAdd);
-    return true;
+
+    string stationName = stationToAdd.getStationName();
+    string stationURL = stationToAdd.getStationURL();
+    bool isAdded = this->api->addNewRadioStation(stationName
+                                                ,stationURL);
+    if(isAdded){
+      this->stationVector.push_back(stationToAdd);
+    }
+    return isAdded;
   }else{
     return false;
   }
