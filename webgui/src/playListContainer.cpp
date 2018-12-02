@@ -1,37 +1,49 @@
+#include <tuple>
+
 #include "addStationWidget.h"
 #include "playListContainer.h"
 #include "stationTableWidget.h"
 #include "pageWidgetContainer.h"
+#include"radifiServiceAPI.h"
+
 
 using namespace Wt;
+using namespace std;
+
+typedef list<tuple<string,string>> listOfStationTuples;
 
 PlayListContainer::PlayListContainer(const std::string& pageTitle,
                     RadifiServiceAPI& api)
                   :PageContainer(pageTitle){
 
-
+  this->api = &api;
   PageWidgetContainer* addStationWidgetContainer = addWidget(cpp14::make_unique<PageWidgetContainer>("Añadir emisora"));
 
 
   PageWidgetContainer* radioStationListContainer = addWidget(cpp14::make_unique<PageWidgetContainer>("Lista de emisoras"));
   WContainerWidget* tableWidgetContainer = radioStationListContainer->addWidget(cpp14::make_unique<WContainerWidget>());
-  StationTableWidget* tableWidget = tableWidgetContainer->addWidget(cpp14::make_unique<StationTableWidget>(api));
+  this->tableWidget = tableWidgetContainer->addWidget(cpp14::make_unique<StationTableWidget>(api));
 
-  AddStationWidget* addStationWidget = addStationWidgetContainer->addWidget(cpp14::make_unique<AddStationWidget>(tableWidget));
+  AddStationWidget* addStationWidget = addStationWidgetContainer->addWidget(cpp14::make_unique<AddStationWidget>(this->tableWidget));
 
 
   tableWidgetContainer->setOverflow(Wt::Overflow::Auto,Wt::Orientation::Vertical);
 
-  Station station1("Radio Almaina", "https://www.radioalmaina.org/radio_almaina.m3u");
-  Station station2("Radio La Colifata", "http://streamall.alsolnet.com:443/lacolifata");
-  Station station3("WCPE", "http://audio-ogg.ibiblio.org:8000/wcpe.ogg.m3u");
+  this->addStationsFromService();
+  this->tableWidget->generateTable();
+}
 
-  tableWidget->addStation(station1);
-  tableWidget->addStation(station2);
-  tableWidget->addStation(station3);
+void PlayListContainer::addStationsFromService(){
+  listOfStationTuples stationsFromService;
+  this->api->getStationList(stationsFromService);
 
-  tableWidget->generateTable();
-
-
-
+  for (listOfStationTuples::iterator it=stationsFromService.begin();
+        it != stationsFromService.end();
+        ++it){
+            tuple<string,string> stationDataTuple = *it;
+            string stationName = std::get<0>(stationDataTuple);
+            string stationURL = std::get<1>(stationDataTuple);
+            Station stationToAdd(stationName,stationURL);
+            this->tableWidget->insertStation(stationToAdd);
+  }
 }
