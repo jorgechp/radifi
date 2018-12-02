@@ -17,7 +17,7 @@ radifi_gui : $(OBJS)
 	$(LD_LIBS)
 
 build/%.o : src/%.cpp
-	g++ -c $< $(CPP_FLAGS) -Iinclude $(STD_FLAG) -o $@
+	g++ -c $< $(CPP_FLAGS) -Iinclude -Ilibs $(STD_FLAG) -o $@
 
 clean:
 	$(RM_COMMAND) build/*.o

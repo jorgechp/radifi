@@ -251,7 +251,8 @@ class API:
                 :return: A Response object. 200 status code if the station is playing.
                 :rtype: Response
             """
-            station_list = self._station_manager.get_stations_list()
+            station_list = {"stations" : self._station_manager.get_stations_list()}
+
             return self._handle_http_response(station_list, 200)
 
     #

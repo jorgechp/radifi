@@ -5,6 +5,9 @@
 #include <Wt/WText.h>
 #include <Wt/WPushButton.h>
 
+
+
+
 #include "stationTableWidget.h"
 #include"radifiServiceAPI.h"
 
@@ -17,15 +20,15 @@ StationTableWidget::StationTableWidget(RadifiServiceAPI& api){
 
 bool StationTableWidget::addStation(Station& stationToAdd){
   std::vector<Station>::iterator findIter =
-    std::find(this->stationVector.begin(), this->stationVector.end(), stationToAdd);
+                                        std::find(this->stationVector.begin(),
+                                        this->stationVector.end(), stationToAdd);
   if(findIter == this->stationVector.end()){
-
     string stationName = stationToAdd.getStationName();
     string stationURL = stationToAdd.getStationURL();
     bool isAdded = this->api->addNewRadioStation(stationName
                                                 ,stationURL);
     if(isAdded){
-      this->stationVector.push_back(stationToAdd);
+      this->insertStation(stationToAdd);
     }
     return isAdded;
   }else{
@@ -33,14 +36,33 @@ bool StationTableWidget::addStation(Station& stationToAdd){
   }
 }
 
+void StationTableWidget::insertStation(Station& stationToInsert){
+  this->stationVector.push_back(stationToInsert);
+}
+
 int StationTableWidget::getNumStations(){
   return this->stationVector.size();
 }
 
-bool StationTableWidget::removeStation(int stationIndex){
+bool StationTableWidget::sintonizeStation(unsigned int stationIndex){
+  if(stationIndex < this->stationVector.size()){
+    this->api->stopRadioStation();
+    return this->api->playRadioStation(stationIndex);
+  }
+  return false;
+}
+
+bool StationTableWidget::removeStation(unsigned int stationIndex){
   if(stationIndex < this->getNumStations()){
-    this->stationVector.erase(this->stationVector.begin()+stationIndex);
-    return true;
+    bool isDeleted = false;
+    if(stationIndex < this->stationVector.size()){
+      isDeleted = this->api->removeRadioStation(stationIndex);
+    }
+
+    if(isDeleted){
+      this->stationVector.erase(this->stationVector.begin()+stationIndex);
+      return true;
+    }
   }
   return false;
 }
@@ -60,6 +82,9 @@ void StationTableWidget::generateTable(){
       newTableRow->elementAt(1)->addWidget(cpp14::make_unique<WText>(currentStation->getStationURL()));
       sintonizeButton = newTableRow->elementAt(2)->addWidget(cpp14::make_unique<Wt::WPushButton>("Sintonizar"));
       sintonizeButton->setStyleClass("btn-success");
+      sintonizeButton->clicked().connect([=] {
+        this->sintonizeStation(currentRow);
+      });
       removeButton = newTableRow->elementAt(3)->addWidget(cpp14::make_unique<Wt::WPushButton>("Eliminar"));
       removeButton->setStyleClass("btn-warning");
       removeButton->clicked().connect([=] {

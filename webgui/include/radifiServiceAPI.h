@@ -1,7 +1,13 @@
-#include<string>
+#include <string>
+#include <list>
+#include <tuple>
+#include <memory>
+
+#include "station.h"
 
 using namespace std;
 
+typedef list<tuple<string,string>> listOfStationTuples;
 
 /**
 * This class represent a page, with a title header.
@@ -25,7 +31,28 @@ public:
   */
   bool stopRadioStation();
 
+  /**
+  * Add a new Station to the station list of the service.
+  * @param name The name of the new station to be added.
+  * @param url The url of the new station to be addd.
+  * @return true if the insertion were correct, false otherwise.
+  */
   bool addNewRadioStation(string& name, string& url);
+
+  /**
+  * Send the service a request to remove a radio station.
+  * @param idStation The id of the station to be removed
+  * @return true if the station was removed, false otherwise.
+  */
+  bool removeRadioStation(unsigned int idStation);
+
+  /**
+  * Get a list of station data from the service. Each station
+  * is represented by a tuple with the name and the url of the station.
+  * tuple<string,string>.
+  */
+  void getStationList(listOfStationTuples& listToFill);
+
 private:
 
   string *host;

@@ -9,6 +9,10 @@ using namespace Wt;
 * This class represent the PlayList page.
 */
 class PlayListContainer : public PageContainer{
+private:
+  RadifiServiceAPI* api;
+  StationTableWidget* tableWidget;
+  void addStationsFromService();
 public:
   /*
   * Public constructor.
