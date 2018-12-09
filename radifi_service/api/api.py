@@ -383,7 +383,7 @@ class API:
             station_url = request.json['alarm_url']
 
 
-            is_selected = self._alarm_manager.get_current_alarm_radio_station(station_name,station_url)
+            is_selected = self._alarm_manager.set_current_alarm_radio_station(station_name,station_url)
 
             status = 400
             if is_selected:

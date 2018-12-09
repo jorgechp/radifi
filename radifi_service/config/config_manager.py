@@ -99,6 +99,7 @@ class ConfigManager:
             self._config['ALARM']['alarm_minute'] = "00"
             self._config['ALARM']['alarm_minute'] = "00"
             self._config['ALARM']['default_alarm_path'] = "./resources/default_alarm.ogg"
+            self._config['ALARM']['default_station_name'] = ""
             self._config['ALARM']['default_station_url'] = ""
             self._config['ALARM']['default_station_title'] = ""
 

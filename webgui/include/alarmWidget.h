@@ -25,7 +25,7 @@ public:
 private:
   RadifiServiceAPI* api;
   Wt::WComboBox* cb ;
-  Wt::WText *stationName;
+  Wt::WText *stationName;  
 
   /**
   * Gets the current alarm time.
@@ -60,12 +60,6 @@ private:
   * @return bool The alarm status.
   */
   const bool isAlarmEnabled();
-
-  /**
-  * Set the station to be played when alarm is active
-  * @param stationToSet The index of the station to set.
-  */
-  void setAlarmStation(int stationToSet);
 
   /**
   * Get a vector with the station list.
