@@ -56,9 +56,20 @@ class AlarmManager:
         :return: A tuple with the name and the url of the radio station.
         :rtype: tuple
         """
-        station_name = self._config_alarm['default_station_url']
-        station_url = self._config_alarm['default_alarm_path']
+        station_name = self._config_alarm['alarm_station_name']
+        station_url = self._config_alarm['alarm_station_url']
         return station_name, station_url
+
+    def set_current_alarm_radio_station(self, station_name: str,station_url: str):
+        """
+        Set the alarm station
+        :param station_name: The name of the station
+        :param station_url:  The url to the station
+        :return:
+        """
+        self._config_alarm['alarm_station_name'] = station_name
+        self._config_alarm['alarm_station_url'] = station_url
+        return True
 
 
     def set_current_alarm(self, hour_to_set: int, minute_to_set: int):

@@ -89,17 +89,23 @@ AlarmWidget::AlarmWidget(RadifiServiceAPI& api){
 
     std::vector<Station*>* lista_emisoras = this->getStationList();
 
-    for (std::vector<Station*>::iterator it = lista_emisoras->begin() ; it != lista_emisoras->end(); ++it){
-      this->cb->addItem((*it)->getStationName());
+
+
+    for (std::vector<Station*>::iterator it = lista_emisoras->begin() ;
+          it != lista_emisoras->end();
+          ++it){
+                  this->cb->addItem((*it)->getStationName());
     }
 
+
     WPushButton* saveStationPtr = groupBoxNewStationSettings->addWidget(cpp14::make_unique<WPushButton>("Guardar Emisora"));
-    saveStationPtr->clicked().connect([&] {
+    saveStationPtr->clicked().connect([=] {
+
         int currentSelectedStationIndex = this->cb->currentIndex();
-        Station* stationSelected = lista_emisoras->at(currentSelectedStationIndex);
+        Station* stationSelected = lista_emisoras->at(currentSelectedStationIndex);        
 
         if(this->api->setCurrentAlarmStation(*stationSelected)){
-
+            this->updateCurrentStationText();
         }
     });
 
@@ -143,10 +149,7 @@ void AlarmWidget::updateAlarmText(WPushButton* toggleAlarmtr){
 
 }
 
-
-void AlarmWidget::setAlarmStation(int stationToSet){}
-
-  std::vector<Station*>*  AlarmWidget::getStationList(){
+std::vector<Station*>*  AlarmWidget::getStationList(){
     listOfStationTuples listOfStations;
     this->api->getStationList(listOfStations);
     std::vector<Station*>* stationVector = new std::vector<Station*>();

@@ -199,15 +199,18 @@ std::unique_ptr<Station> RadifiServiceAPI::getCurrentAlarmStation(){
 bool RadifiServiceAPI::setCurrentAlarmStation(Station& stationToSet){
   string requestURL = this->connectionURL
                       + "/alarm/station";
+
   string stationName = stationToSet.getStationName();
   string stationURL = stationToSet.getStationURL();
 
+
   string jsonRequest = "{\"alarm_name\":\"" + stationName +"\", "
                       + "\"alarm_url\": \"" + stationURL + "\"}";
+  
 
   RestClient::Response response = RestClient::patch(requestURL
                                   ,"application/json"
                                   ,jsonRequest);
   return response.code == 200;
-                                
+
 }
