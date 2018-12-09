@@ -4,6 +4,7 @@
 #include <Wt/WPushButton.h>
 
 #include "station.h"
+#include "radifiServiceAPI.h"
 
 using namespace Wt;
 
@@ -12,13 +13,36 @@ using namespace Wt;
 */
 class AlarmWidget : public Wt::WContainerWidget{
 public:
+  const static string TIME_PATTERN_FORMAT;
+
   /**
   * Default public constructor
+  * @param api An instance of the RadifiServiceAPI class.
   */
-   AlarmWidget();
+   AlarmWidget(RadifiServiceAPI& api);
 
 
 private:
+  RadifiServiceAPI* api;
+  Wt::WComboBox* cb ;
+  Wt::WText *stationName;
+
+  /**
+  * Gets the current alarm time.
+  *
+  * @return A string with the current alarm time. Format: hh:mm
+  */
+  const string getCurrentAlarmTime();
+
+  /**
+  * Converts a string into a WTime instance. String must contain a date
+  * with the pattern: hh:mm.
+  *
+  * @param timeToParse The string with the time to parse.
+  * @return An WTime instance.
+  */
+  WTime parseTime(const string& timeToParse);
+
   /**
   * Updates the alarm button text
   * @param toggleAlarmtr The button to be updated.
@@ -26,54 +50,16 @@ private:
   void updateAlarmText(WPushButton* toggleAlarmtr);
 
   /**
-  * Set the hour
-  * @param hour The new hour to be setted.
-  */
-  void setHour(const short& hour);
-
-  /**
-  * Get the hour.
-  * @return short The current hour.
-  */
-  const short getHour();
-
-  /**
-  * Set the minute
-  * @param minute The new minute to be setted.
-  */
-  void setMinute(const short& minute);
-
-  /**
-  * Get the minute.
-  * @return short The current minute.
-  */
-  const short getMinute();
-
-  /**
-  * Set the seconds
-  * @param seconds The new seconds to be setted.
-  */
-  void setSeconds(const short& seconds);
-
-  /**
-  * Get the seconds.
-  * @return short The current seconds.
-  */
-  const short getSeconds();
-
-
-  /**
   * Toggle on/off the alarm.
-  * @param is_alarm_enable The current status of the alarm.
+  * @param isAlarmEnabled The current status of the alarm.
   */
-  void setAlarmEnabled(const bool& is_alarm_enable);
+  void setAlarmEnabled(const bool& isAlarmEnabled);
 
   /**
   * Get the alarm status.
   * @return bool The alarm status.
   */
   const bool isAlarmEnabled();
-
 
   /**
   * Set the station to be played when alarm is active
@@ -82,21 +68,11 @@ private:
   void setAlarmStation(int stationToSet);
 
   /**
-  * Get the station being played when alarm is active.
-  * @return The Station index.
-  */
-  int getAlarmStation();
-
-  /**
   * Get a vector with the station list.
   */
   std::vector<Station*>* getStationList();
 
-  /**
-  * Updates, in the gui, the station selected at Radifi.
-  * @param comboBox The comboBox instance to be updated.
-  */
-  void updateStationSelected(Wt::WComboBox& comboBox);
+  void updateCurrentStationText();
 
 
 };

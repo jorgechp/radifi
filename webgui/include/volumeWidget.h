@@ -1,16 +1,20 @@
 #include <Wt/WContainerWidget.h>
 
+#include "radifiServiceAPI.h"
+
 using namespace Wt;
 
 /**
 * This widget controls remotely the volume of radify
 */
 class VolumeWidget : public Wt::WContainerWidget{
+private:
+  RadifiServiceAPI* api;
 public:
   /**
   * Default public constructor
   */
-   VolumeWidget();
+   VolumeWidget(RadifiServiceAPI& api);
 
    /**
    * Set the volume

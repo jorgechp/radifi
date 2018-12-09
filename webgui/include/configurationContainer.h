@@ -1,5 +1,7 @@
 #include<string>
+
 #include"pageContainer.h"
+#include "radifiServiceAPI.h"
 
 using namespace std;
 
@@ -7,12 +9,15 @@ using namespace std;
 * This class represents the Configuration webpage.
 */
 class ConfigurationContainer : public PageContainer{
+private:
+  RadifiServiceAPI* api;
 public:
   /**
   * Public constructor
   * @param pageTitle The title of the page.
+  * @param api An instance of the RadifiServiceAPI class.
   */
-  ConfigurationContainer(const std::string& pageTitle);
+  ConfigurationContainer(const std::string& pageTitle, RadifiServiceAPI& api);
 
   /**
   * Set the volume.
@@ -35,6 +40,6 @@ public:
   /**
   * Set the alarm station.
   * @param stationName The station.
-  */  
+  */
   void setAlarmStation(const string& stationName);
 };

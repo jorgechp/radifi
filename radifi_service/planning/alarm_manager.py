@@ -48,7 +48,18 @@ class AlarmManager:
             :return: A tuple with the hour and the minute.
             :rtype: tuple
         """
-        return self._hour_to_set, self._minute_to_set
+        return self._hour_to_set, self._minute_to_set, self.__is_alarm_enabled
+
+    def get_current_alarm_radio_station(self):
+        """
+        Get the current alarm station
+        :return: A tuple with the name and the url of the radio station.
+        :rtype: tuple
+        """
+        station_name = self._config_alarm['default_station_url']
+        station_url = self._config_alarm['default_alarm_path']
+        return station_name, station_url
+
 
     def set_current_alarm(self, hour_to_set: int, minute_to_set: int):
         """
@@ -133,13 +144,18 @@ class AlarmManager:
         self.__is_alarm_enabled = is_alarm_enabled
         if self._scheduler_thread is not None:
             self._clear_scheduler()
+        self._config_alarm['alarm_enabled'] = "no"
         if is_alarm_enabled:
             self._enable_alarm()
+            self._config_alarm['alarm_enabled'] = "yes"
+
 
     def save_status(self):
         """
         Save the current settings.
         """
+        self._config_alarm['alarm_hour'] = self._hour_to_set
+        self._config_alarm['alarm_minute'] = self._minute_to_set
         self._config.save()
 
     def execute_alarm(self):

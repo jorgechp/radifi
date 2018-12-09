@@ -50,8 +50,66 @@ public:
   * Get a list of station data from the service. Each station
   * is represented by a tuple with the name and the url of the station.
   * tuple<string,string>.
+  *
+  * @param listToFill A list<tuple<string,string>> of stations to be filled.
   */
   void getStationList(listOfStationTuples& listToFill);
+
+  /**
+  * Set a new volume for the system.
+  * @param volumeToSet the desired volume.
+  * @return true if the volume were changed. false otherwise.
+  */
+  bool setCurrentVolume(const short& volumeToSet);
+
+  /**
+  * Gets the current volume.
+  * @return short the current volume.
+  */
+  const short getCurrentVolume();
+
+  /**
+  * Get the current alarm time.
+  *
+  * @return A string with the current alarm. Format: "hh:mm"
+  */
+  const string getCurrentAlarm();
+
+  /**
+  * Set the current alarm time.
+  *
+  * @param alarmToSet string a const string reference. Format: "hh:mm"
+  * @return bool True if the alarm were changed, false otherwise.
+  */
+  bool setCurrentAlarm(const string& alarmToSet);
+
+  /**
+  * Toggles the alarm.
+  * @param isAlarmEnabled true to enable the alarm, false otherwise.
+  * @return bool True if the alarm were changed, false otherwise.
+  */
+  bool setAlarmEnabled(bool isAlarmEnabled);
+
+  /**
+  * Gets the current alarm status.
+  *
+  * @return bool True if the alarm is enabled, false if the alarm is disabled.
+  */
+  bool isAlarmEnabled();
+
+  /**
+  * Gets the current station selected as Station Alarm.
+  *
+  * @return std::unique_ptr<Station> A Station instance of the current station.
+  */
+  std::unique_ptr<Station> getCurrentAlarmStation();
+
+  /**
+  * Sets the station Alarm.
+  * @param stationToSet A reference to the station instance to be selected.
+  * @return bool true if the new station were properly selected, false otherwise.
+  */
+  bool setCurrentAlarmStation(Station& stationToSet);
 
 private:
 
