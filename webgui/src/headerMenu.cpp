@@ -18,9 +18,7 @@ HeaderMenu::HeaderMenu(){
 
   auto menu = navigation->addMenu(Wt::cpp14::make_unique<Wt::WMenu>());
   menu->setStyleClass("nav nav-tabs");
-  menu->addItem("Emisoras")->setLink(Wt::WLink(Wt::LinkType::InternalPath, "/playList"));  
+  menu->addItem("Emisoras")->setLink(Wt::WLink(Wt::LinkType::InternalPath, "/playList"));
   menu->addItem("Configuration")->setLink(Wt::WLink(Wt::LinkType::InternalPath, "/config"));
-
-
 
 }

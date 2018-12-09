@@ -10,10 +10,16 @@
 #include <Wt/WComboBox.h>
 
 #include "alarmWidget.h"
+#include "radifiServiceAPI.h"
 
 using namespace Wt;
 
-AlarmWidget::AlarmWidget(){
+typedef list<tuple<string,string>> listOfStationTuples;
+
+const string AlarmWidget::TIME_PATTERN_FORMAT = "hh:mm";
+
+AlarmWidget::AlarmWidget(RadifiServiceAPI& api){
+    this->api = &api;
 
     setStyleClass("form-inline groupBox-custom");
 
@@ -23,11 +29,16 @@ AlarmWidget::AlarmWidget(){
 
     WVBoxLayout* groupBox = setLayout(cpp14::make_unique<WVBoxLayout>());
     WHBoxLayout* groupBoxDateSettings = groupBox->addLayout(cpp14::make_unique<WHBoxLayout>());
-    WHBoxLayout* groupBoxStationSettings = groupBox->addLayout(cpp14::make_unique<WHBoxLayout>());
+    WHBoxLayout* groupBoxCurrentStationSettings = groupBox->addLayout(cpp14::make_unique<WHBoxLayout>());
+    WHBoxLayout* groupBoxNewStationSettings = groupBox->addLayout(cpp14::make_unique<WHBoxLayout>());
 
-    groupBoxDateSettings->addWidget(cpp14::make_unique<WText>("Hora de la Alarma"),1);
+    groupBoxDateSettings->addWidget(cpp14::make_unique<WText>("Hora de la Alarma"));
     WTimeEdit* timeEditor = groupBoxDateSettings->addWidget(cpp14::make_unique<WTimeEdit>());
-    timeEditor->setTime(Wt::WTime::currentTime());
+    string currentAlarmTime = this->getCurrentAlarmTime();
+
+    WTime currentTimeAsWTime = this->parseTime(currentAlarmTime);
+
+    timeEditor->setTime(currentTimeAsWTime);
     timeEditor->setStyleClass("form-control Wt-timeedit active timeEdit-input");
     WPushButton* okPtr = groupBoxDateSettings->addWidget(cpp14::make_unique<WPushButton>("Guardar Alarma"));
     WPushButton* toggleAlarmtr = groupBoxDateSettings->addWidget(cpp14::make_unique<WPushButton>());
@@ -36,16 +47,19 @@ AlarmWidget::AlarmWidget(){
 
     okPtr->clicked().connect([=] {
       WTime time = timeEditor->time();
-      this->setHour(time.hour());
-      this->setMinute(time.minute());
-      this->setSeconds(time.second());
 
-      int hourReturned = this->getHour();
-      int minuteReturned = this->getMinute();
-      int secondsReturned = this->getSeconds();
+      string formattedTime = time
+                              .toString(AlarmWidget::TIME_PATTERN_FORMAT)
+                              .toUTF8();
+      this->api->setCurrentAlarm(formattedTime);
 
-      WTime timeReturned = WTime(hourReturned,minuteReturned,secondsReturned);
+      string currentAlarmTime = this->getCurrentAlarmTime();
+
+      WTime timeReturned = this->parseTime(currentAlarmTime);
       timeEditor->setTime(timeReturned);
+      this->setAlarmEnabled(false);
+      this->updateAlarmText(toggleAlarmtr);
+
     });
 
     toggleAlarmtr->clicked().connect([=] {
@@ -54,26 +68,39 @@ AlarmWidget::AlarmWidget(){
     });
 
     /*
-    * Station selection.
+    * Current station
+    */
+    groupBoxCurrentStationSettings->
+              addWidget(cpp14::make_unique<WText>("Emisora Actual"));
+    this->stationName =
+              groupBoxCurrentStationSettings->
+              addWidget(Wt::cpp14::make_unique<Wt::WText>(""),3);
+    this->updateCurrentStationText();
+
+
+    /*
+    * New Station selection.
     */
 
-    groupBoxStationSettings->addWidget(cpp14::make_unique<WText>("Emisora"),1);
-    Wt::WComboBox* cb = groupBoxStationSettings->addWidget(Wt::cpp14::make_unique<Wt::WComboBox>(),1);
-    cb->setMargin(10, Wt::Side::Right);
+    groupBoxNewStationSettings->addWidget(cpp14::make_unique<WText>("Emisora"),1);
+    this->cb = groupBoxNewStationSettings->addWidget(Wt::cpp14::make_unique<Wt::WComboBox>(),1);
+    this->cb->setMargin(10, Wt::Side::Right);
 
 
     std::vector<Station*>* lista_emisoras = this->getStationList();
 
     for (std::vector<Station*>::iterator it = lista_emisoras->begin() ; it != lista_emisoras->end(); ++it){
-      cb->addItem((*it)->getStationName());
+      this->cb->addItem((*it)->getStationName());
     }
 
-    this->updateStationSelected(*cb);
+    WPushButton* saveStationPtr = groupBoxNewStationSettings->addWidget(cpp14::make_unique<WPushButton>("Guardar Emisora"));
+    saveStationPtr->clicked().connect([&] {
+        int currentSelectedStationIndex = this->cb->currentIndex();
+        Station* stationSelected = lista_emisoras->at(currentSelectedStationIndex);
 
-    WPushButton* saveStationPtr = groupBoxStationSettings->addWidget(cpp14::make_unique<WPushButton>("Guardar Emisora"));
-    saveStationPtr->clicked().connect([=] {
-      this->setAlarmStation(cb->currentIndex());
-      this->updateStationSelected(*cb);
+        if(this->api->setCurrentAlarmStation(*stationSelected)){
+
+        }
     });
 
     /*
@@ -84,24 +111,30 @@ AlarmWidget::AlarmWidget(){
 
 }
 
-void AlarmWidget::setHour(const short& hour){}
+const string AlarmWidget::getCurrentAlarmTime(){
+  return this->api->getCurrentAlarm();
+}
 
-const short AlarmWidget::getHour(){ return 4;}
+WTime AlarmWidget::parseTime(const string& timeToParse){
+  WTime currentTimeAsWTime = Wt::WTime::currentTime();
 
-void AlarmWidget::setMinute(const short& minute){}
+  if(!timeToParse.empty()){
+    currentTimeAsWTime = Wt::WTime::fromString(timeToParse,AlarmWidget::TIME_PATTERN_FORMAT);
+  }
+  return currentTimeAsWTime;
+}
 
-const short AlarmWidget::getMinute(){ return 4;}
+void AlarmWidget::setAlarmEnabled(const bool& isAlarmEnabled){
+  this->api->setAlarmEnabled(isAlarmEnabled);
+}
 
-void AlarmWidget::setSeconds(const short& seconds){}
-
-const short AlarmWidget::getSeconds(){ return 4;}
-
-void AlarmWidget::setAlarmEnabled(const bool& is_alarm_enable){}
-
-const bool AlarmWidget::isAlarmEnabled(){ return false;}
+const bool AlarmWidget::isAlarmEnabled(){
+  return this->api->isAlarmEnabled();
+}
 
 void AlarmWidget::updateAlarmText(WPushButton* toggleAlarmtr){
   bool isAlarmEnabled = this->isAlarmEnabled();
+
   std::string toggleText = "Desactivar Alarma";
   if(!isAlarmEnabled){
     toggleText = "Activar Alarma";
@@ -113,23 +146,26 @@ void AlarmWidget::updateAlarmText(WPushButton* toggleAlarmtr){
 
 void AlarmWidget::setAlarmStation(int stationToSet){}
 
+  std::vector<Station*>*  AlarmWidget::getStationList(){
+    listOfStationTuples listOfStations;
+    this->api->getStationList(listOfStations);
+    std::vector<Station*>* stationVector = new std::vector<Station*>();
 
-int AlarmWidget::getAlarmStation(){
-  return 2;
+    for (listOfStationTuples::iterator it=listOfStations.begin();
+          it != listOfStations.end();
+          ++it){
+              tuple<string,string> stationDataTuple = *it;
+              string stationName = std::get<0>(stationDataTuple);
+              string stationURL = std::get<1>(stationDataTuple);
+              stationVector->push_back(new Station(stationName,stationURL));
+              }
+
+    return stationVector;
 }
 
-
-std::vector<Station*>*  AlarmWidget::getStationList(){
-  std::vector<Station*>* stationVector = new std::vector<Station*>();
-  stationVector->push_back(new Station("hola","hola1"));
-  stationVector->push_back(new Station("hola2","hola2"));
-  stationVector->push_back(new Station("hola3","hola3"));
-  stationVector->push_back(new Station("hola4","hola4"));
-  return stationVector;
-}
-
-void AlarmWidget::updateStationSelected(Wt::WComboBox& comboBox){
-  int remoteStationSelected = this->getAlarmStation();
-  comboBox.setCurrentIndex(remoteStationSelected);
-  std::cout << remoteStationSelected << std::endl;
+void AlarmWidget::updateCurrentStationText(){
+  auto currentAlarmStation = this->api->getCurrentAlarmStation();
+  const string currentStationName = currentAlarmStation->getStationName();
+  this->stationName->setText(currentStationName);
+  currentAlarmStation.reset();
 }

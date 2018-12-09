@@ -28,10 +28,9 @@ Radifi::Radifi()
 void Radifi::handleNavigation(const std::string &internalPath){
 
  if(internalPath == "/config"){
-    ConfigurationContainer *configurationContainer = mainStack_->addWidget(cpp14::make_unique<ConfigurationContainer>("Configuración"));
+    ConfigurationContainer *configurationContainer = mainStack_->addWidget(cpp14::make_unique<ConfigurationContainer>("Configuración",*this->apiREST));
     mainStack_->setCurrentWidget(configurationContainer);
-  }
-  else{
+  } else{
     PlayListContainer *playListContainer = mainStack_->addWidget(cpp14::make_unique<PlayListContainer>("Emisoras",*this->apiREST));
     mainStack_->setCurrentWidget(playListContainer);
   }

@@ -7,6 +7,7 @@ import os
 import time
 import requests
 import vlc
+import alsaaudio
 
 
 class MusicPlayer:
@@ -37,6 +38,7 @@ class MusicPlayer:
         self._player = None
         self._is_played_succesfully = False
         self._error_code = 0
+        self._alsa_audio = alsaaudio.Mixer()
 
     def is_played_successfully(self):
         """
@@ -141,10 +143,37 @@ class MusicPlayer:
 
     def get_current_station_url(self):
         """
-        Get the curren station url being played.
+        Get the current station url being played.
 
         RETURN
             :return: The url of the station
             :rtype: string
         """
         return self._url
+
+    def get_current_volume(self):
+        """
+        Get the current volume.
+
+        RETURN
+            :return: The url of the station
+            :rtype: string
+        """
+        if self.is_playing():
+            return self._alsa_audio.getvolume()
+        else:
+            return -1
+
+    def set_current_volume(self, volume_to_set):
+        """
+        Changes the current volume.
+
+        ARGUMENTS
+            :param volume_to_set: value between 0 and 100
+            :type volume_to_set: int
+        """
+
+        volume_to_set = min(volume_to_set,100)
+        volume_to_set = max(volume_to_set,0)
+
+        self._alsa_audio.setvolume(volume_to_set)

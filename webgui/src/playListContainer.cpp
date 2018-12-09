@@ -1,10 +1,12 @@
 #include <tuple>
 
+#include <Wt/WPushButton.h>
+
 #include "addStationWidget.h"
 #include "playListContainer.h"
 #include "stationTableWidget.h"
 #include "pageWidgetContainer.h"
-#include"radifiServiceAPI.h"
+#include "radifiServiceAPI.h"
 
 
 using namespace Wt;
@@ -17,6 +19,11 @@ PlayListContainer::PlayListContainer(const std::string& pageTitle,
                   :PageContainer(pageTitle){
 
   this->api = &api;
+  Wt::WPushButton *stopStationButton = addWidget(Wt::cpp14::make_unique<WPushButton>("Stop station"));
+  stopStationButton->setStyleClass("btn-warning");
+  stopStationButton->clicked().connect([&] {
+      this->api->stopRadioStation();
+  });
   PageWidgetContainer* addStationWidgetContainer = addWidget(cpp14::make_unique<PageWidgetContainer>("Añadir emisora"));
 
 

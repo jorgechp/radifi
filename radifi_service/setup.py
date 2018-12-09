@@ -21,5 +21,6 @@ setup(
         "flask == 1.0.2",
         "validators == 0.12.3",
         "schedule == 0.5.0"
+        "pyalsaaudio == 0.8.4"
     ],
 )
