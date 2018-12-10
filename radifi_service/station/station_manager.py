@@ -115,6 +115,9 @@ class StationManager:
                 return True
         return False
 
+    def remove_all_stations(self):
+        self._station_parsed_list.clear()
+
     @staticmethod
     def _is_correct_url(url_to_parse):
         """
