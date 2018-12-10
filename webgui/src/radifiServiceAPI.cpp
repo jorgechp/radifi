@@ -206,11 +206,30 @@ bool RadifiServiceAPI::setCurrentAlarmStation(Station& stationToSet){
 
   string jsonRequest = "{\"alarm_name\":\"" + stationName +"\", "
                       + "\"alarm_url\": \"" + stationURL + "\"}";
-  
+
 
   RestClient::Response response = RestClient::patch(requestURL
                                   ,"application/json"
                                   ,jsonRequest);
   return response.code == 200;
 
+}
+
+bool RadifiServiceAPI::removeAllStations(){
+  string requestURL = this->connectionURL
+                      + "/station/stations";
+  RestClient::Response response = RestClient::del(requestURL);
+  using json = nlohmann::json;
+
+  return response.code == 204;
+
+}
+
+bool RadifiServiceAPI::removeAlarm(){
+  string requestURL = this->connectionURL
+                      + "/alarm";
+  RestClient::Response response = RestClient::del(requestURL);
+  using json = nlohmann::json;
+
+  return response.code == 204;
 }

@@ -111,6 +111,18 @@ public:
   */
   bool setCurrentAlarmStation(Station& stationToSet);
 
+  /**
+  * Remove all the stations.
+  * @return bool true if all stations were removed. False otherwise.
+  */
+  bool removeAllStations();
+
+  /**
+  * Remove the alarm.
+  * @return bool true if the alarm were removed. False otherwise.
+  */
+  bool removeAlarm();
+
 private:
 
   string *host;

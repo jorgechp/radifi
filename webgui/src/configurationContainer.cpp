@@ -20,7 +20,7 @@ RadifiServiceAPI& api)
 
   VolumeWidget* volumeWidget = volumeWidgetContainer->addWidget(cpp14::make_unique<VolumeWidget>(*this->api));
   AlarmWidget* alarmWidget = alarmWidgetContainer->addWidget(cpp14::make_unique<AlarmWidget>(*this->api));
-  ResetConfigurationWidget* resetConfigurationWidget = resetWidgetContainer->addWidget(cpp14::make_unique<ResetConfigurationWidget>());
+  ResetConfigurationWidget* resetConfigurationWidget = resetWidgetContainer->addWidget(cpp14::make_unique<ResetConfigurationWidget>(*this->api));
 
 
 }

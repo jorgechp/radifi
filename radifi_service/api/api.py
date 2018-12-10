@@ -301,6 +301,25 @@ class API:
 
             return self._handle_http_response(station_list, 200)
 
+        @self._app.route('/station/stations', methods=['DELETE'])
+        def remove_all_stations():
+            """
+            Removes all the stations. A DELETE request is required.
+
+            RETURN:
+                :return: A Response object. 204 status code if all the stations were removed.
+                :rtype: Response
+            """
+            is_removed = self._station_manager.remove_all_stations()
+
+            if is_removed:
+                self.save_stations_list()
+                code = 204
+            else:
+                code = 400
+
+            return self._handle_http_response({}, code)
+
     #
     # ENTRY POINTS FOR ALARM MANAGMENT ROUTES
     #
@@ -496,6 +515,8 @@ class API:
             """
             self._player_manager.stop_player()
             return self._handle_http_response("", 204)
+
+
 
     #
     # ENTRY POINTS FOR TIME MANAGMENT ROUTES

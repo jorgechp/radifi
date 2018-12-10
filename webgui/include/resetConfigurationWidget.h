@@ -1,16 +1,22 @@
 #include <Wt/WContainerWidget.h>
 
+#include "radifiServiceAPI.h"
+
 using namespace Wt;
 
 /**
 * This widget allow to reset all the configuration.
 */
 class ResetConfigurationWidget : public Wt::WContainerWidget{
+private:
+  RadifiServiceAPI* api;
 public:
   /**
   * Default public constructor
+  *
+  * @param api a reference to the API instance.
   */
-   ResetConfigurationWidget();
+   ResetConfigurationWidget(RadifiServiceAPI& api);
 
    /**
    * Remove all the stations from the radifi system
