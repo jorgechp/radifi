@@ -165,8 +165,8 @@ class AlarmManager:
         """
         Save the current settings.
         """
-        self._config_alarm['alarm_hour'] = self._hour_to_set
-        self._config_alarm['alarm_minute'] = self._minute_to_set
+        self._config_alarm['alarm_hour'] = str(self._hour_to_set)
+        self._config_alarm['alarm_minute'] = str(self._minute_to_set)
         self._config.save()
 
     def execute_alarm(self):
