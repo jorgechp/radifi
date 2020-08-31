@@ -155,10 +155,10 @@ class API:
         @self._app.route('/station/<int:id_station>', methods=['GET'])
         def get_station_info(id_station):
             """
-            Get the information about the station that is playing.
+            Get the information about a station
 
             RETURN:
-                :return: A Response object. 200 status code if there is a station being played.
+                :return: A Response object. 200 status code if the station exists.
                 400 otherwise.
                 :rtype: Response
             """
@@ -291,7 +291,7 @@ class API:
         @self._app.route('/station/stations', methods=['GET'])
         def list_stations():
             """
-            Stops the straming service. A GET request must be performed.
+            Lists all the streaming stations.
 
             RETURN:
                 :return: A Response object. 200 status code if the station is playing.
@@ -321,7 +321,7 @@ class API:
             return self._handle_http_response({}, code)
 
     #
-    # ENTRY POINTS FOR ALARM MANAGMENT ROUTES
+    # ENTRY POINTS FOR ALARM MANAGEMENT ROUTES
     #
     def _define_alarm_routes(self):
         """
@@ -355,7 +355,7 @@ class API:
         @self._app.route('/alarm/station', methods=['GET'])
         def get_current_alarm_radio_station():
             """
-            Get information about the current station selected as añar,. GET request.
+            Get information about the current station selected as alarm,. GET request.
 
             RETURN:
                 :return: A Response object.
@@ -371,23 +371,17 @@ class API:
             }
             return self._handle_http_response(res, 200)
 
-        @self._app.route('/alarm/station', methods=['PATCH'])
-        def set_current_alarm_radio_station():
+        @self._app.route('/alarm/station/<int:id_station>', methods=['PATCH'])
+        def set_current_alarm_radio_station(id_station):
             """
             Sets the new alarm radio station.
 
             PARAMETERS:
-                - name : alarm_name
+                - name : id_station
                   in: query
-                  type: str
+                  type: int
                   required: true
-                  description: The name of the radio station.
-
-                - name : alarm_url
-                  in: query
-                  type: str
-                  required: true
-                  description: The url of the radio station.
+                  description: The id of the station
 
             RETURN:
 
@@ -395,24 +389,29 @@ class API:
                 :rtype: bool
             """
 
-            if not request.json or 'alarm_name' not in request.json or 'alarm_url' not in request.json:
-                return Response({}, status=400, mimetype='application/json')
+            if id_station < len(self._station_manager.get_stations_list()):
+                station = self._station_manager.get_stations_list()[id_station]
 
-            station_name = request.json['alarm_name']
-            station_url = request.json['alarm_url']
+                station_name = station["name"]
+                station_url = station["url"]
 
+                is_selected = self._alarm_manager.set_current_alarm_radio_station(station_name, station_url)
+                if is_selected:
+                    status = 200
+                    res = {'result': True}
+                else:
+                    status = 400
+                    res = {'result': False}
+            else:
+                res = {'result': False}
+                status = 404
+            return self._handle_http_response(res, status)
 
-            is_selected = self._alarm_manager.set_current_alarm_radio_station(station_name,station_url)
-
-            status = 400
-            if is_selected:
-                status = 200
-            return self._handle_http_response({}, status)
 
         @self._app.route('/alarm', methods=['PUT'])
         def set_alarm():
             """
-            Get information about the current alarm. PUT request.
+            Sets a new alarm. PUT request.
 
             PARAMETERS:
                 - name : hour
@@ -432,6 +431,10 @@ class API:
             """
             if not request.json or 'hour' not in request.json or 'minute' not in request.json:
                 return self._handle_http_response("", 400)
+            hour = request.json['hour']
+            minute = request.json['minute']
+            if (hour < 0 or hour > 24) and (minute < 0 or minute > 59):
+                return self._handle_http_response("", 400)
             self._alarm_manager.set_current_alarm(request.json['hour'], request.json['minute'])
             self._alarm_manager.save_status()
             return self._handle_http_response("", 204)
@@ -445,59 +448,35 @@ class API:
                 :return: A Response object. 204 status code if the station is playing.
                 :rtype: Response
             """
-            self._alarm_manager.set_current_alarm("00:00:00")
+            self._alarm_manager.toggle_alarm(False)
             self._alarm_manager.save_status()
             return self._handle_http_response("", 204)
 
         @self._app.route('/alarm', methods=['PATCH'])
         def enable_alarm():
             """
-            Enable or Disable the current alarm. A PATCH request is required.
-
-            PARAMETERS:
-                - name : enabled
-                  in: request
-                  type: bool
-                  required: true
-                  description: True if the alarm must be enabled, False otherwise.
+            Removes the current alarm. A DELETE request is required.
 
             RETURN:
                 :return: A Response object. 204 status code if the station is playing.
-                   400 otherwise.
                 :rtype: Response
             """
-            if not request.json or 'enabled' not in request.json:
-                return self._handle_http_response("", 404)
-            if request.json['enabled'] in ["0", "1"]:
-                self._alarm_manager.toggle_alarm(request.json['enabled'] == "1");
-                self._alarm_manager.save_status()
-                return self._handle_http_response("", 200)
-            return self._handle_http_response("", 400)
+            self._alarm_manager.toggle_alarm(True)
+            self._alarm_manager.save_status()
+            return self._handle_http_response("", 204)
 
         @self._app.route('/alarm/play', methods=['GET'])
         def play_alarm():
             """
             Starts playing the current alarm. A GET request is required.
 
-            PARAMETERS:
-                - name : defaultSong
-                  in: request
-                  type: int
-                  required: false
-                  description: 1 if we want to play the default song. 0 if we want to play the
-                    radio station set as Alarm.
-
             RETURN:
                 :return: A Response object. 204 status code if the station is playing.
                   406 otherwise.
                 :rtype: Response
             """
-            if not request.args or 'defaultSong' not in request.args:
-                is_default_song = 0
-            else:
-                is_default_song = request.args.get('defaultSong')
-            is_default_song_as_boolean = bool(is_default_song)
-            self._player_manager.play_alarm(is_default_song_as_boolean)
+
+            self._player_manager.play_alarm(is_default_song=True)
             is_played = self._player_manager.is_played_successfully()
             if is_played:
                 return self._handle_http_response("", 204)

@@ -110,7 +110,7 @@ class MusicPlayer:
             self._error_code = 2
             self._is_played_succesfully = False
 
-    def play_alarm(self, is_default_song=0):
+    def play_alarm(self, is_default_song=True):
         """
         Plays the alarm.
 
@@ -122,8 +122,8 @@ class MusicPlayer:
             :return: True if the straming is being played. False otherwise.
             :rtype: bool
         """
-        alarm_configuration = self._config['ALARM']
-        url_to_play = alarm_configuration['default_station_url']
+        alarm_configuration = self._config.get_properties_group("ALARM")
+        url_to_play = alarm_configuration['alarm_station_url']
         if is_default_song or url_to_play:
             abs_path = os.path.abspath(alarm_configuration['default_alarm_path'])
             url_to_play = "file://" + abs_path
