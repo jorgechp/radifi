@@ -172,12 +172,17 @@ class AlarmManager:
         self._config.save()
 
     @staticmethod
-    def execute_alarm(player_manager: MusicPlayer):
+    def execute_alarm(player_manager: MusicPlayer, number_of_trials = 5):
         """
         Executes the Alarm. Calling to an external script file.
         """
-        player_manager.play_alarm(is_default_song=True)
-        # general_config = self._config.get_properties_group('GENERAL')
-        # url_to_call = general_config['base_url']
-        # port = general_config['port']
-        # launch_alarm_script.execute(url_to_call, port)
+
+
+        is_playing = False
+        number_of_attempt = 0
+        while not is_playing and number_of_attempt < number_of_trials:
+            is_playing = player_manager.play_alarm(is_default_song=False)
+            number_of_attempt = number_of_attempt + 1
+
+        if not is_playing:
+            player_manager.play_alarm(is_default_song=True)
