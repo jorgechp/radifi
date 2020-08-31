@@ -46,7 +46,7 @@ class API:
         self._define_alarm_routes()
         self._define_time_routes()
         self._define_other_routes()
-        self._app.run(debug=True)
+        self._app.run(debug=True, use_reloader=False)
 
     @staticmethod
     def _handle_http_response(data_response: object, html_code: int = 200) -> Response:

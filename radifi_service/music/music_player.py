@@ -122,12 +122,19 @@ class MusicPlayer:
             :return: True if the straming is being played. False otherwise.
             :rtype: bool
         """
+
+        if self.is_playing():
+            return
+
         alarm_configuration = self._config.get_properties_group("ALARM")
-        url_to_play = alarm_configuration['alarm_station_url']
-        if is_default_song or url_to_play:
+        if is_default_song:
             abs_path = os.path.abspath(alarm_configuration['default_alarm_path'])
             url_to_play = "file://" + abs_path
+        else:
+            url_to_play = alarm_configuration['alarm_station_url']
+
         self.play(url_to_play)
+        return self.is_playing()
 
     def stop_player(self):
         """
