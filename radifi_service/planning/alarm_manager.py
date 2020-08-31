@@ -15,6 +15,7 @@ import threading
 import time
 import schedule
 
+from music.music_player import MusicPlayer
 from scripts import launch_alarm_script
 
 
@@ -23,7 +24,7 @@ class AlarmManager:
     AlarmManager class represents the Alarm Management System.
     """
 
-    def __init__(self, config):
+    def __init__(self, config, player_manager: MusicPlayer):
         """
         Constructor. A ConfigManager instance is require to instantiate AlarmManager class.
 
@@ -31,6 +32,7 @@ class AlarmManager:
             :param config: The ConfigManager instance.
             :type config: ConfigManager
         """
+        self._player_manager = player_manager
         self._hour_to_set = 0
         self._minute_to_set = 0
         self.__is_alarm_enabled = False
@@ -139,7 +141,7 @@ class AlarmManager:
         Turns the alarm on. This method is intended to be private.
         """
         time_parsed = str(self._hour_to_set) + ":" + str(self._minute_to_set)
-        schedule.every().day.at(time_parsed).do(AlarmManager.execute_alarm)
+        schedule.every().day.at(time_parsed).do(AlarmManager.execute_alarm, self._player_manager)
         self._trigger_scheduler()
 
     def toggle_alarm(self, is_alarm_enabled):
@@ -169,11 +171,13 @@ class AlarmManager:
         self._config_alarm['alarm_minute'] = str(self._minute_to_set)
         self._config.save()
 
-    def execute_alarm(self):
+    @staticmethod
+    def execute_alarm(player_manager: MusicPlayer):
         """
         Executes the Alarm. Calling to an external script file.
         """
-        general_config = self._config.get_properties_group('GENERAL')
-        url_to_call = general_config['base_url']
-        port = general_config['port']
-        launch_alarm_script.execute(url_to_call, port)
+        player_manager.play_alarm(is_default_song=True)
+        # general_config = self._config.get_properties_group('GENERAL')
+        # url_to_call = general_config['base_url']
+        # port = general_config['port']
+        # launch_alarm_script.execute(url_to_call, port)

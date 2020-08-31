@@ -396,6 +396,7 @@ class API:
                 station_url = station["url"]
 
                 is_selected = self._alarm_manager.set_current_alarm_radio_station(station_name, station_url)
+                self._alarm_manager.save_status()
                 if is_selected:
                     status = 200
                     res = {'result': True}
@@ -435,7 +436,7 @@ class API:
             minute = request.json['minute']
             if (hour < 0 or hour > 24) and (minute < 0 or minute > 59):
                 return self._handle_http_response("", 400)
-            self._alarm_manager.set_current_alarm(request.json['hour'], request.json['minute'])
+            self._alarm_manager.set_current_alarm(hour, minute)
             self._alarm_manager.save_status()
             return self._handle_http_response("", 204)
 
