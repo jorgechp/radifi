@@ -533,7 +533,7 @@ class API:
             return self._handle_http_response(res, 200)
 
         @self._app.route('/time', methods=['POST'])
-        def get_current_time():
+        def set_current_time():
             """
             Updates the system time.
 
@@ -543,6 +543,75 @@ class API:
                 :rtype: Response
             """
             self._time_manager.update_system_time()
+            return self._handle_http_response({}, 200)
+
+        @self._app.route('/time', methods=['PUT'])
+        def set_specific_time_():
+            """
+            Updates the system time to a certain time.
+
+            PARAMETERS:
+                - name : year
+                  in: request
+                  type: int
+                  required: true
+                  description: The year to be set.
+
+                - name : month
+                  in: request
+                  type: int
+                  required: true
+                  description: The month to be set.
+
+                - name : day
+                  in: request
+                  type: int
+                  required: true
+                  description: The day to be set.
+
+                - name : hour
+                  in: request
+                  type: int
+                  required: true
+                  description: The hour to be set.
+
+                - name : minute
+                  in: request
+                  type: int
+                  required: true
+                  description: The minute to be set.
+
+            RETURN:
+                :return: A Response object. 200 status code with the current system time
+                  as data response.
+                :rtype: Response
+            """
+
+            if not request.json or 'year' not in request.json or 'day' not in request.json or 'month' not in request.json:
+                return self._handle_http_response("", 400)
+
+            if not request.json or 'hour' not in request.json or 'minute' not in request.json:
+                return self._handle_http_response("", 400)
+
+            year = request.json['year']
+            month = request.json['month']
+            day = request.json['day']
+            hour = request.json['hour']
+            minute = request.json['minute']
+
+            if year < 1970 or year > 9999:
+                return self._handle_http_response("", 400)
+
+            if month < 1 or month > 12:
+                return self._handle_http_response("", 400)
+
+            if day < 1 or day > 31:
+                return self._handle_http_response("", 400)
+
+            if (hour < 0 or hour > 24) and (minute < 0 or minute > 59):
+                return self._handle_http_response("", 400)
+
+            self._time_manager.set_system_time(year, month, day, hour, minute)
             return self._handle_http_response({}, 200)
 
     #
