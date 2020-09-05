@@ -9,6 +9,8 @@ import requests
 import vlc
 import alsaaudio
 
+from config.config_manager import ConfigManager
+
 
 class MusicPlayer:
     """
@@ -19,7 +21,7 @@ class MusicPlayer:
     * Get information about the current stream.
     """
 
-    def __init__(self, config, ready_event=None):
+    def __init__(self, config: ConfigManager, ready_event=None):
         """
         Constructor.
 
@@ -38,7 +40,7 @@ class MusicPlayer:
         self._player = None
         self._is_played_succesfully = False
         self._error_code = 0
-        self._alsa_audio = alsaaudio.Mixer()
+        self._alsa_audio = alsaaudio.Mixer(config.get_properties_group('GENERAL')['mixer'])
 
     def is_played_successfully(self):
         """

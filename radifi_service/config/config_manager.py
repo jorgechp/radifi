@@ -72,6 +72,7 @@ class ConfigManager:
             self._config['GENERAL'] = {}
             self._config['GENERAL']['base_url'] = "http://127.0.0.1"
             self._config['GENERAL']['port'] = "5000"
+            self._config['GENERAL']['mixer'] = "Master"
 
             self.save()
 
