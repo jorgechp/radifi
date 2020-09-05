@@ -8,6 +8,11 @@ import json
 from flask_api import FlaskAPI
 from flask import request, Response
 
+from music.music_player import MusicPlayer
+from planning.alarm_manager import AlarmManager
+from planning.time_manager import TimeManager
+from station.station_manager import StationManager
+
 
 class API:
     """
@@ -18,7 +23,10 @@ class API:
 
     _DEFAULT_MIMETPYE = 'application/json'
 
-    def __init__(self, player_manager, station_manager, time_manager, alarm_manager):
+    def __init__(self, player_manager: MusicPlayer,
+                 station_manager: StationManager,
+                 time_manager: TimeManager,
+                 alarm_manager: AlarmManager):
         """
         Constructor of the class.
 
@@ -32,6 +40,7 @@ class API:
             :type alarm_manager: AlarmManager
             :param alarm_manager: The alarm subsystem
         """
+
         self._app = FlaskAPI(__name__)
         self._player_manager = player_manager
         self._station_manager = station_manager
@@ -522,6 +531,19 @@ class API:
             current_time = self._time_manager.get_current_time()
             res = {"time": str(current_time)}
             return self._handle_http_response(res, 200)
+
+        @self._app.route('/time', methods=['POST'])
+        def get_current_time():
+            """
+            Updates the system time.
+
+            RETURN:
+                :return: A Response object. 200 status code with the current system time
+                  as data response.
+                :rtype: Response
+            """
+            self._time_manager.update_system_time()
+            return self._handle_http_response({}, 200)
 
     #
     # ENTRY POINTS FOR OTHER ROUTES
