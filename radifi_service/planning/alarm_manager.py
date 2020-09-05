@@ -16,7 +16,6 @@ import time
 import schedule
 
 from music.music_player import MusicPlayer
-from scripts import launch_alarm_script
 
 
 class AlarmManager:
