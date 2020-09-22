@@ -153,10 +153,12 @@ class TimeManager:
     def update_lcd_time(short_time_format: str, long_time_format: str, lcd_manager: LCDManager):
         startime = datetime.datetime.now()
         while True:
-            print("tick")
+
             current_time = datetime.datetime.now()
             time_formatter = short_time_format if lcd_manager.is_busy_lcd else long_time_format
             strtime = current_time.strftime(time_formatter)
             lcd_manager.print_message(strtime)
 
-            time.sleep(60.0 - ((time.time() - startime) % 60.0))
+            sleeping_time = 60.0 - ((time.time() - startime) % 60.0)
+            print("sleeping for "+str(sleeping_time))
+            time.sleep(sleeping_time)
