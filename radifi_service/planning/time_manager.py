@@ -64,7 +64,7 @@ class TimeManager:
         self._config_time = self._config.get_properties_group('TIME')
         self._lcd_manager = lcd_manager
 
-        self._long_time_format = "%d/%m/%Y %H:%M"
+        self._long_time_format = "%H:%M \n %d/%m/%Y"
         self._short_time_format = "%H:%M"
 
         th = threading.Thread(target=TimeManager.update_lcd_time, args=(
@@ -153,6 +153,7 @@ class TimeManager:
     def update_lcd_time(short_time_format: str, long_time_format: str, lcd_manager: LCDManager):
         startime = datetime.datetime.now()
         while True:
+            print("tick")
             current_time = datetime.datetime.now()
             time_formatter = short_time_format if lcd_manager.is_busy_lcd else long_time_format
             strtime = current_time.strftime(time_formatter)
