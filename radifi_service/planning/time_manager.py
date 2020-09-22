@@ -154,8 +154,6 @@ class TimeManager:
                         long_time_format: str,
                         lcd_manager: LCDManager):
 
-        one_minute_delta = datetime.timedelta(minutes=1)
-
         while True:
             initial_time = datetime.datetime.now()
             time_formatter = short_time_format if lcd_manager.is_busy_lcd else long_time_format
@@ -167,5 +165,4 @@ class TimeManager:
 
             sleeping_time = 60-final_time_second
 
-            print("sleeping for "+str(sleeping_time))
             time.sleep(sleeping_time)
