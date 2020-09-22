@@ -64,7 +64,7 @@ class TimeManager:
         self._config_time = self._config.get_properties_group('TIME')
         self._lcd_manager = lcd_manager
 
-        self._long_time_format = "%H:%M \n %d/%m/%Y"
+        self._long_time_format = "      %H:%M \n    %d/%m/%Y"
         self._short_time_format = "%H:%M"
 
         th = threading.Thread(target=TimeManager.update_lcd_time, args=(
@@ -163,9 +163,9 @@ class TimeManager:
             lcd_manager.print_message(strtime)
 
             final_time = datetime.datetime.now()
-            d1 = final_time + one_minute_delta
-            d1.replace(second=0)
-            sleeping_time = (d1 - final_time).total_seconds()
+            final_time_second = final_time.second
+
+            sleeping_time = 60-final_time_second
 
             print("sleeping for "+str(sleeping_time))
             time.sleep(sleeping_time)
