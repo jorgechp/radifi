@@ -159,6 +159,6 @@ class TimeManager:
             strtime = current_time.strftime(time_formatter)
             lcd_manager.print_message(strtime)
 
-            sleeping_time = 60.0 - ((time.time() - startime) % 60.0)
+            sleeping_time = datetime.timedelta(seconds=60) - ((time.time() - startime) % 60.0)
             print("sleeping for "+str(sleeping_time))
             time.sleep(sleeping_time)
