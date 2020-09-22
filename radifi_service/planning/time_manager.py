@@ -10,7 +10,8 @@ import datetime
 import os
 import subprocess
 import sys
-import sched, time
+import time
+import threading
 
 from output.lcd.lcd_manager import LCDManager
 
@@ -63,14 +64,17 @@ class TimeManager:
         self._config_time = self._config.get_properties_group('TIME')
         self._lcd_manager = lcd_manager
 
-        self._long_time_format = "%H:%M \n %d/%m/%Y"
+        self._long_time_format = "%d/%m/%Y %H:%M"
         self._short_time_format = "%H:%M"
 
-        self._scheduler = sched.scheduler(time.time, time.sleep)
-        self._scheduler.enter(1, 2, self.__update_lcd_time)
-        self._scheduler.run()
+        th = threading.Thread(target=TimeManager.update_lcd_time, args=(
+            self._short_time_format,
+            self._long_time_format,
+            self._lcd_manager
+        ))
+        th.start()
 
-        self._last_minute = -1
+
 
     def update_system_time(self):
         """
@@ -145,11 +149,13 @@ class TimeManager:
         elif sys.platform=='win32':
             self._set_system_time_windows(time_tuple)
 
-    def __update_lcd_time(self):
-        current_time = datetime.datetime.now()
-        if current_time.minute != self._last_minute:
-            time_formatter = self._short_time_format if self._lcd_manager.is_busy_lcd else self._long_time_format
+    @staticmethod
+    def update_lcd_time(short_time_format: str, long_time_format: str, lcd_manager: LCDManager):
+        startime = datetime.datetime.now()
+        while True:
+            current_time = datetime.datetime.now()
+            time_formatter = short_time_format if lcd_manager.is_busy_lcd else long_time_format
             strtime = current_time.strftime(time_formatter)
-            self._lcd_manager.print_message(strtime)
-            self._scheduler.enter(1, 2, self.__update_lcd_time)
-            self._last_minute = current_time.minute
+            lcd_manager.print_message(strtime)
+
+            time.sleep(60.0 - ((time.time() - startime) % 60.0))
