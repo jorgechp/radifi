@@ -150,16 +150,23 @@ class TimeManager:
             self._set_system_time_windows(time_tuple)
 
     @staticmethod
-    def update_lcd_time(short_time_format: str, long_time_format: str, lcd_manager: LCDManager):
-        startime = datetime.datetime.now()
-        minute_delta = datetime.timedelta(seconds=60)
-        while True:
+    def update_lcd_time(short_time_format: str,
+                        long_time_format: str,
+                        last_minute: int,
+                        lcd_manager: LCDManager):
 
-            current_time = datetime.datetime.now()
+        one_minute_delta = datetime.timedelta(minutes=1)
+
+        while True:
+            initial_time = datetime.datetime.now()
             time_formatter = short_time_format if lcd_manager.is_busy_lcd else long_time_format
-            strtime = current_time.strftime(time_formatter)
+            strtime = initial_time.strftime(time_formatter)
             lcd_manager.print_message(strtime)
 
-            sleeping_time = minute_delta - ((time.time() - startime) % minute_delta)
+            final_time = datetime.datetime.now()
+            d1 = final_time + one_minute_delta
+            d1.replace(second=0)
+            sleeping_time = (d1 - final_time).total_seconds()
+
             print("sleeping for "+str(sleeping_time))
             time.sleep(sleeping_time)
