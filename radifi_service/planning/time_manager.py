@@ -152,6 +152,7 @@ class TimeManager:
     @staticmethod
     def update_lcd_time(short_time_format: str, long_time_format: str, lcd_manager: LCDManager):
         startime = datetime.datetime.now()
+        minute_delta = datetime.timedelta(seconds=60)
         while True:
 
             current_time = datetime.datetime.now()
@@ -159,6 +160,6 @@ class TimeManager:
             strtime = current_time.strftime(time_formatter)
             lcd_manager.print_message(strtime)
 
-            sleeping_time = datetime.timedelta(seconds=60) - ((time.time() - startime) % 60.0)
+            sleeping_time = minute_delta - ((time.time() - startime) % minute_delta)
             print("sleeping for "+str(sleeping_time))
             time.sleep(sleeping_time)
