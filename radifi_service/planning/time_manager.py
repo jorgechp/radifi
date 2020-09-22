@@ -152,7 +152,6 @@ class TimeManager:
     @staticmethod
     def update_lcd_time(short_time_format: str,
                         long_time_format: str,
-                        last_minute: int,
                         lcd_manager: LCDManager):
 
         one_minute_delta = datetime.timedelta(minutes=1)
