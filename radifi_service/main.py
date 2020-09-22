@@ -15,6 +15,7 @@ from threading import Event
 from api.api import API
 from config.config_manager import ConfigManager
 from music.music_player import MusicPlayer
+from output.lcd.lcd_manager import LCDManager
 from station.station_manager import StationManager
 from planning.time_manager import TimeManager
 from planning.alarm_manager import AlarmManager
@@ -25,7 +26,9 @@ STATION_FILE_URL = 'config/stations'
 CONFIG: ConfigManager = ConfigManager(CONFIG_FILE_URL)
 CONFIG.prepare_all_configs()
 
-TIME_MANAGER = TimeManager(CONFIG)
+LCD_MANAGER = LCDManager()
+
+TIME_MANAGER = TimeManager(CONFIG, LCD_MANAGER)
 
 READY_EVENT = Event()
 MUSIC_PLAYER = MusicPlayer(CONFIG, READY_EVENT)

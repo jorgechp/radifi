@@ -10,6 +10,9 @@ import datetime
 import os
 import subprocess
 import sys
+import sched, time
+
+from output.lcd.lcd_manager import LCDManager
 
 
 def check_root_privileges():
@@ -48,7 +51,7 @@ class TimeManager:
     of changing and getting the current System date.
     """
 
-    def __init__(self, config):
+    def __init__(self, config, lcd_manager: LCDManager):
         """
         Constructor.
 
@@ -58,6 +61,14 @@ class TimeManager:
         """
         self._config = config
         self._config_time = self._config.get_properties_group('TIME')
+        self._lcd_manager = lcd_manager
+
+        self._long_time_format = "%d/%m/%Y %H:%M"
+        self._short_time_format = "%H:%M"
+
+        self._scheduler = sched.scheduler(time.time, time.sleep)
+        self._scheduler.enter(1, 2, self.__update_lcd_time)
+        self._scheduler.run()
 
     def update_system_time(self):
         """
@@ -132,5 +143,9 @@ class TimeManager:
         elif sys.platform=='win32':
             self._set_system_time_windows(time_tuple)
 
-
-
+    def __update_lcd_time(self):
+        current_time = datetime.datetime.now()
+        time_formatter = self._short_time_format if self._lcd_manager.is_busy_lcd else self._long_time_format
+        strtime = current_time.strftime(time_formatter)
+        self._lcd_manager.print_message(strtime)
+        self._scheduler.enter(1, 2, self.__update_lcd_time)
