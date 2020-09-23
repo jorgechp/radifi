@@ -50,14 +50,16 @@ class LCDManager(object):
     def get_lower_text(self) -> str:
         return self._lower_txt
 
-    def print_message(self, upper_text: str, lower_text: str) -> None:
+    def print_message(self, upper_text="", lower_text="") -> None:
         """
         Clear the LCD screen and print a new message.
 
         ARGUMENTS
         ---------
          :param upper_text: The upper message to be printed.
+         :type upper_text: str
          :param lower_text: The lower message to be printed.
+         :type lower_text: str
         """
 
         self.__lcd.clear()
