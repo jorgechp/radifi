@@ -1,3 +1,5 @@
+import math
+
 import board
 import digitalio
 import adafruit_character_lcd.character_lcd as characterlcd
@@ -16,7 +18,7 @@ class LCDManager(object):
         lcd_d6 = digitalio.DigitalInOut(board.D27)
         lcd_d7 = digitalio.DigitalInOut(board.D22)
 
-        lcd_columns = 16
+        self._lcd_columns = 16
         lcd_rows = 2
 
         self.__lcd = characterlcd.Character_LCD_Mono(
@@ -26,21 +28,43 @@ class LCDManager(object):
             lcd_d5,
             lcd_d6,
             lcd_d7,
-            lcd_columns,
+            self._lcd_columns,
             lcd_rows)
 
         self.__lcd.cursor = False
 
         self.is_busy_lcd = False
 
-    def print_message(self, message_to_print: str) -> None:
+        self._upper_txt = ""
+        self._lower_txt = ""
+
+    def _center_text(self, text_to_center:str) -> str:
+        len_text = len(text_to_center)
+
+        cursor_position = math.round((self._lcd_columns - len_text) / 2) + 1
+        return " " * cursor_position + text_to_center
+
+    def get_upper_text(self) -> str:
+        return self._upper_txt
+
+    def get_lower_text(self) -> str:
+        return self._lower_txt
+
+    def print_message(self, upper_text: str, lower_text: str) -> None:
         """
         Clear the LCD screen and print a new message.
 
         ARGUMENTS
         ---------
-         :param message_to_print: The new message to be printed.
+         :param upper_text: The upper message to be printed.
+         :param lower_text: The lower message to be printed.
         """
 
         self.__lcd.clear()
-        self.__lcd.message = message_to_print
+
+        if upper_text:
+            self._upper_txt = self._center_text(upper_text)
+        if lower_text:
+            self._lower_txt = self._center_text(lower_text)
+
+        self.__lcd.message = self._upper_txt + "\n" + self._lower_txt

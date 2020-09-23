@@ -64,12 +64,12 @@ class TimeManager:
         self._config_time = self._config.get_properties_group('TIME')
         self._lcd_manager = lcd_manager
 
-        self._long_time_format = "      %H:%M \n    %d/%m/%Y"
-        self._short_time_format = "%H:%M"
+        self._date_format = "%d/%m/%Y"
+        self._time_format = "%H:%M"
 
         th = threading.Thread(target=TimeManager.update_lcd_time, args=(
-            self._short_time_format,
-            self._long_time_format,
+            self._time_format,
+            self._date_format,
             self._lcd_manager
         ))
         th.start()
@@ -150,15 +150,25 @@ class TimeManager:
             self._set_system_time_windows(time_tuple)
 
     @staticmethod
-    def update_lcd_time(short_time_format: str,
-                        long_time_format: str,
+    def update_lcd_time(hour_format: str,
+                        date_format: str,
                         lcd_manager: LCDManager):
+        """
+        Updates the time in the LCD screen.
+
+        """
 
         while True:
             initial_time = datetime.datetime.now()
-            time_formatter = short_time_format if lcd_manager.is_busy_lcd else long_time_format
-            strtime = initial_time.strftime(time_formatter)
-            lcd_manager.print_message(strtime)
+            upper_text, lower_text = "", ""
+
+            if lcd_manager.is_busy_lcd:
+                lower_text = initial_time.strftime(hour_format)
+            else:
+                upper_text = initial_time.strftime(hour_format)
+                lower_text = initial_time.strftime(date_format)
+
+            lcd_manager.print_message(upper_text,lower_text)
 
             final_time = datetime.datetime.now()
             final_time_second = final_time.second
