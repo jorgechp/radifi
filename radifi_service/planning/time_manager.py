@@ -67,7 +67,7 @@ class TimeManager:
         self._config_time = self._config.get_properties_group('TIME')
         self._lcd_manager = lcd_manager
 
-        th = threading.Thread(target=TimeManager.update_lcd_time, args=(self._lcd_manager))
+        th = threading.Thread(target=TimeManager.update_lcd_time, args=(self._lcd_manager,))
         th.start()
 
 
