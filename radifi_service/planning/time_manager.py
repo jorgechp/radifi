@@ -147,7 +147,7 @@ class TimeManager:
 
 
     @staticmethod
-    def update_lcd_time(lcd_manager: LCDManager):
+    def update_lcd_time(lcd_manager: LCDManager) -> None:
         """
         Updates the time in the LCD screen.
         """
@@ -165,7 +165,7 @@ class TimeManager:
             time.sleep(sleeping_time)
 
     @staticmethod
-    def print_lcd_time(lcd_manager):
+    def print_lcd_time(lcd_manager) -> None:
         initial_time = datetime.datetime.now()
         upper_text, lower_text = "", ""
         if lcd_manager.is_busy_lcd:

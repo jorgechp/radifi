@@ -9,6 +9,7 @@ from flask_api import FlaskAPI
 from flask import request, Response
 
 from music.music_player import MusicPlayer
+from output.lcd.lcd_manager import LCDManager
 from planning.alarm_manager import AlarmManager
 from planning.time_manager import TimeManager
 from station.station_manager import StationManager
@@ -26,7 +27,8 @@ class API:
     def __init__(self, player_manager: MusicPlayer,
                  station_manager: StationManager,
                  time_manager: TimeManager,
-                 alarm_manager: AlarmManager):
+                 alarm_manager: AlarmManager,
+                 lcd_manager: LCDManager):
         """
         Constructor of the class.
 
@@ -39,6 +41,8 @@ class API:
             :param time_manager: The Time subsystem
             :type alarm_manager: AlarmManager
             :param alarm_manager: The alarm subsystem
+            :type lcd_manager: LCDManager
+            :param lcd_manager: The LCD output subsystem
         """
 
         self._app = FlaskAPI(__name__)
@@ -46,6 +50,7 @@ class API:
         self._station_manager = station_manager
         self._time_manager = time_manager
         self._alarm_manager = alarm_manager
+        self._lcd_manager = lcd_manager
 
     def start_api(self):
         """
@@ -56,6 +61,25 @@ class API:
         self._define_time_routes()
         self._define_other_routes()
         self._app.run(debug=True, use_reloader=False, host='0.0.0.0')
+
+    def _lcd_print_message(self, is_busy_player: bool, upper_message="") -> None:
+        """
+        Sends a text to the LCD manager to show different information regarding the status of the player.
+
+        If the player is busy, send the name of the resource which is being played and executes a time updating.
+        If the player is not busy, executes a time updating.
+
+        ARGUMENTS:
+            :param is_busy_player: True if the player is playing music.
+            :type is_busy_player: bool
+            :param upper_message: The message to be show in the upper panel of the LCD.
+            :type upper_message: str
+        """
+
+        self._lcd_manager.is_busy_lcd = is_busy_player
+        if is_busy_player:
+            self._lcd_manager.print_message(upper_text=upper_message)
+        TimeManager.print_lcd_time(self._lcd_manager)
 
     @staticmethod
     def _handle_http_response(data_response: object, html_code: int = 200) -> Response:
@@ -274,9 +298,13 @@ class API:
             """
             num_of_stations = len(self._station_manager.get_stations_list())
             if id_station < num_of_stations:
-                station_url = self._station_manager.get_stations_list()[id_station]['url']
+                station_info = self._station_manager.get_stations_list()[id_station]
+                station_url = station_info['url']
+                station_name = station_info['name']
                 self._player_manager.play(station_url)
                 is_played_successfully = self._player_manager.is_played_successfully()
+                if is_played_successfully:
+                    self._lcd_print_message(True, station_name)
                 res = {'result': is_played_successfully}
                 status = 200
             else:
@@ -489,6 +517,7 @@ class API:
             self._player_manager.play_alarm(is_default_song=True)
             is_played = self._player_manager.is_played_successfully()
             if is_played:
+                self._lcd_print_message(True, "ALARM!!!")
                 return self._handle_http_response("", 204)
 
             return self._handle_http_response("", 406)
@@ -502,7 +531,8 @@ class API:
                 :return: A Response object. 204 status code if the station has been stopped.
                 :rtype: Response
             """
-            self._player_manager.stop_player()
+            if self._player_manager.stop_player():
+                self._lcd_print_message(False)
             return self._handle_http_response("", 204)
 
 

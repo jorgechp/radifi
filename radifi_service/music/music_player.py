@@ -23,22 +23,19 @@ class MusicPlayer:
     * Get information about the current stream.
     """
 
-    def __init__(self, config: ConfigManager, lcd_manager: LCDManager, ready_event=None):
+    def __init__(self, config: ConfigManager, ready_event=None):
         """
         Constructor.
 
         ARGUMENTS
             :param config: A ConfigManager instance.
             :type config: ConfigManager
-            :param lcd_manager: A LCDManager instance.
-            :type lcd_manager: LCDManager
             :param ready_event: Optional parameter,
                 if set, it can be use as a signal to help concurrent threads to
             be synchronized.
             :type ready_event: Event
         """
         self._config = config
-        self._lcd_manager = lcd_manager
         self._vlc_instance = vlc.Instance()
         self._ready = ready_event
         self._url = None
@@ -80,11 +77,7 @@ class MusicPlayer:
         """
         self._url = url
         self._play_sound()
-        if self._is_played_succesfully:
-            self._lcd_manager.is_busy_lcd = True
-            TimeManager.print_lcd_time(self._lcd_manager)
-            return True
-        return False
+        return self._is_played_succesfully
 
     def _play_sound(self):
         """
@@ -156,8 +149,6 @@ class MusicPlayer:
             self._player.stop()
             self._ready.set()
             self._player = None
-            self._lcd_manager.is_busy_lcd = False
-            TimeManager.print_lcd_time(self._lcd_manager)
             return True
 
         return False
