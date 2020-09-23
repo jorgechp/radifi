@@ -41,7 +41,7 @@ class LCDManager(object):
     def _center_text(self, text_to_center:str) -> str:
         len_text = len(text_to_center)
 
-        cursor_position = math.ceil((self._lcd_columns - len_text) / 2) + 1
+        cursor_position = math.ceil((self._lcd_columns - len_text) / 2)
         return " " * cursor_position + text_to_center
 
     def get_upper_text(self) -> str:
