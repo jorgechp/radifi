@@ -296,6 +296,7 @@ class API:
                 404 if there is not a radio station with that id.
                 :rtype: Response
             """
+            print("sdasda")
             num_of_stations = len(self._station_manager.get_stations_list())
             if id_station < num_of_stations:
                 station_info = self._station_manager.get_stations_list()[id_station]
