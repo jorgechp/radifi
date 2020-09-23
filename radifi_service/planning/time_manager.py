@@ -52,6 +52,9 @@ class TimeManager:
     of changing and getting the current System date.
     """
 
+    DATE_FORMAT = "%d/%m/%Y"
+    HOUR_FORMAT = "%H:%M"
+
     def __init__(self, config, lcd_manager: LCDManager):
         """
         Constructor.
@@ -64,14 +67,7 @@ class TimeManager:
         self._config_time = self._config.get_properties_group('TIME')
         self._lcd_manager = lcd_manager
 
-        self._date_format = "%d/%m/%Y"
-        self._time_format = "%H:%M"
-
-        th = threading.Thread(target=TimeManager.update_lcd_time, args=(
-            self._time_format,
-            self._date_format,
-            self._lcd_manager
-        ))
+        th = threading.Thread(target=TimeManager.update_lcd_time, args=(self._lcd_manager))
         th.start()
 
 
@@ -149,30 +145,32 @@ class TimeManager:
         elif sys.platform=='win32':
             self._set_system_time_windows(time_tuple)
 
+
     @staticmethod
-    def update_lcd_time(hour_format: str,
-                        date_format: str,
-                        lcd_manager: LCDManager):
+    def update_lcd_time(lcd_manager: LCDManager):
         """
         Updates the time in the LCD screen.
-
         """
+        print_lcd_time_caller = TimeManager.print_lcd_time
+        datetime_now_caller = datetime.datetime.now
 
         while True:
-            initial_time = datetime.datetime.now()
-            upper_text, lower_text = "", ""
+            print_lcd_time_caller(lcd_manager)
 
-            if lcd_manager.is_busy_lcd:
-                lower_text = initial_time.strftime(hour_format)
-            else:
-                upper_text = initial_time.strftime(hour_format)
-                lower_text = initial_time.strftime(date_format)
-
-            lcd_manager.print_message(upper_text,lower_text)
-
-            final_time = datetime.datetime.now()
+            final_time = datetime_now_caller()
             final_time_second = final_time.second
 
             sleeping_time = 60-final_time_second
 
             time.sleep(sleeping_time)
+
+    @staticmethod
+    def print_lcd_time(lcd_manager):
+        initial_time = datetime.datetime.now()
+        upper_text, lower_text = "", ""
+        if lcd_manager.is_busy_lcd:
+            lower_text = initial_time.strftime(TimeManager.HOUR_FORMAT)
+        else:
+            upper_text = initial_time.strftime(TimeManager.HOUR_FORMAT)
+            lower_text = initial_time.strftime(TimeManager.DATE_FORMAT)
+        lcd_manager.print_message(upper_text, lower_text)
