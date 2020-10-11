@@ -42,7 +42,8 @@ class MusicPlayer:
         self._player = None
         self._is_played_succesfully = False
         self._error_code = 0
-        self._alsa_audio = alsaaudio.Mixer(config.get_properties_group('GENERAL')['mixer'])
+        self._alsa_audio = alsaaudio.Mixer(config.get_properties_group('GENERAL')['mixer'],
+                                           cardindex=config.get_properties_group('GENERAL')['audio_card'])
 
     def is_played_successfully(self):
         """
